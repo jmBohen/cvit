@@ -1,6 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordUserDto } from './dto/change-password-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -11,18 +21,31 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Patch(':id')
+  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(id, updateUserDto);
+  }
+
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findByEmail(@Body('email') email: string) {
+    return this.usersService.findByEmail(email);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.usersService.findOne(id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.usersService.remove(id);
+  }
+
+  @Post(':id/change-password')
+  changePassword(
+    @Param('id') id: number,
+    @Body() changePasswordDto: ChangePasswordUserDto,
+  ) {
+    return this.usersService.changePassword(id, changePasswordDto);
   }
 }

@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { ChangePasswordUserDto } from './dto/change-password-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -10,20 +13,64 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    const user = this.userRepository.create(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const user = this.userRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
     return this.userRepository.save(user);
   }
 
-  findAll() {
-    return this.userRepository.find();
+  update(id: number, updateUserDto: UpdateUserDto) {
+    return this.userRepository.update(id, updateUserDto);
   }
 
   findOne(id: number) {
-    return this.userRepository.findOneBy({ id });
+    return this.userRepository.findOne({
+      where: { id },
+      select: ['id', 'firstName', 'lastName', 'email'],
+    });
+  }
+
+  findByEmail(email: string) {
+    return this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'firstName', 'lastName', 'email'],
+    });
   }
 
   remove(id: number) {
     return this.userRepository.delete(id);
+  }
+
+  async changePassword(id: number, changePasswordDto: ChangePasswordUserDto) {
+    if (changePasswordDto.newPassword1 !== changePasswordDto.newPassword2) {
+      throw new BadRequestException('New passwords do not match');
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id },
+      select: ['id', 'password'],
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const isOldPasswordValid = await bcrypt.compare(
+      changePasswordDto.oldPassword,
+      user.password,
+    );
+    if (!isOldPasswordValid) {
+      throw new BadRequestException('Old password is incorrect');
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      changePasswordDto.newPassword1,
+      10,
+    );
+
+    await this.userRepository.update(id, { password: hashedPassword });
+    return { message: 'Password changed successfully' };
   }
 }
