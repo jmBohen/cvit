@@ -20,7 +20,7 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return this.userRepository.findOne({ where: { id } });
+    return this.userRepository.findOneBy({ id });
   }
 
   remove(id: number) {

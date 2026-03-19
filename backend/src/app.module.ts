@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerMiddleware } from './logger/logger.middleware';
-import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -23,12 +23,11 @@ import { UsersModule } from './users/users.module';
         username: configService.get<string>('POSTGRES_USER'),
         password: configService.get<string>('POSTGRES_PASSWORD'),
         database: configService.get<string>('POSTGRES_DB'),
+        entities: [User],
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: true, // TODO remove in production (use migrations instead)
       }),
     }),
-
-    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
