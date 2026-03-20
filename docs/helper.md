@@ -1,9 +1,15 @@
-# Database Commands
+# Helper commands
 
-Stop the DB: docker compose stop
-Start the DB: docker compose start
-Check Logs: docker logs -f local_pg_container
-Wipe Data & Reset: docker compose down -v
+## Database Commands
+
+Stop the DB: `docker compose stop`
+Start the DB: `docker compose start`
+Check Logs: `docker logs -f local_pg_container`
+Wipe Data & Reset: `docker compose down -v`
+
+## How to start backend
+
+`npm run start:dev`
 
 ## How to implement modules
 
