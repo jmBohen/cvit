@@ -29,6 +29,7 @@ import { ActivityCvModule } from './cv-items/activity-cv/activity-cv.module';
 import { InterestCvModule } from './cv-items/interest-cv/interest-cv.module';
 import { LinkCvModule } from './cv-items/link-cv/link-cv.module';
 import { ProjectCvModule } from './cv-items/project-cv/project-cv.module';
+import { UsersModule } from './core/users/users.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { ProjectCvModule } from './cv-items/project-cv/project-cv.module';
     InterestCvModule,
     LinkCvModule,
     ProjectCvModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

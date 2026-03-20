@@ -22,21 +22,26 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update(id, updateUserDto);
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    return this.userRepository.save({ ...user, ...updateUserDto });
   }
 
   findOne(id: number) {
     return this.userRepository.findOne({
       where: { id },
-      select: ['id', 'firstName', 'lastName', 'email'],
     });
   }
 
   findByEmail(email: string) {
     return this.userRepository.findOne({
       where: { email },
-      select: ['id', 'firstName', 'lastName', 'email'],
     });
   }
 

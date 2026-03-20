@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
 } from 'typeorm';
-
+import { Exclude } from 'class-transformer';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -13,13 +13,14 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Exclude()
   @Column()
   password: string;
 
   @Column()
   firstName: string;
 
-  @Column()
+  @Column({ nullable: true })
   lastName: string;
 
   @Column({ default: true })
