@@ -40,10 +40,6 @@ export class UsersService {
     });
   }
 
-  remove(id: number) {
-    return this.userRepository.delete(id);
-  }
-
   async changePassword(id: number, changePasswordDto: ChangePasswordUserDto) {
     if (changePasswordDto.newPassword1 !== changePasswordDto.newPassword2) {
       throw new BadRequestException('New passwords do not match');
@@ -72,5 +68,12 @@ export class UsersService {
 
     await this.userRepository.update(id, { password: hashedPassword });
     return { message: 'Password changed successfully' };
+  }
+
+  findForAuth(email: string) {
+    return this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'password'],
+    });
   }
 }
