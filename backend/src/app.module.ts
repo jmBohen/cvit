@@ -30,6 +30,7 @@ import { InterestCvModule } from './cv-items/interest-cv/interest-cv.module';
 import { LinkCvModule } from './cv-items/link-cv/link-cv.module';
 import { ProjectCvModule } from './cv-items/project-cv/project-cv.module';
 import { UsersModule } from './core/users/users.module';
+import { AuthModule } from './core/auth/auth.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { UsersModule } from './core/users/users.module';
     LinkCvModule,
     ProjectCvModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
