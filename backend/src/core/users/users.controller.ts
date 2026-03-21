@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -20,12 +28,11 @@ export class UsersController {
 
   @Get()
   findByEmail(@Body('email') email: string) {
-    return this.usersService.findByEmail(email);
-  }
+    if (!email) {
+      throw new BadRequestException('Email is required');
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.usersService.findOne(id);
+    return this.usersService.findByEmail(email);
   }
 
   @Post(':id/change-password')
