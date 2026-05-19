@@ -1,34 +1,54 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { EducationService } from './education.service';
 import { CreateEducationDto } from './dto/create-education.dto';
 import { UpdateEducationDto } from './dto/update-education.dto';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @Controller('education')
 export class EducationController {
   constructor(private readonly educationService: EducationService) {}
 
   @Post()
-  create(@Body() createEducationDto: CreateEducationDto) {
-    return this.educationService.create(createEducationDto);
+  create(@CurrentUser('id') userId: number, @Body() dto: CreateEducationDto) {
+    return this.educationService.create(userId, dto);
   }
 
   @Get()
-  findAll() {
-    return this.educationService.findAll();
+  findAll(@CurrentUser('id') userId: number) {
+    return this.educationService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.educationService.findOne(+id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.educationService.findOne(id, userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEducationDto: UpdateEducationDto) {
-    return this.educationService.update(+id, updateEducationDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: UpdateEducationDto,
+  ) {
+    return this.educationService.update(id, userId, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.educationService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.educationService.remove(id, userId);
   }
 }

@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Experience } from './entities/experience.entity';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 
 @Injectable()
 export class ExperienceService {
-  create(createExperienceDto: CreateExperienceDto) {
-    return 'This action adds a new experience';
+  constructor(
+    @InjectRepository(Experience)
+    private readonly experienceRepository: Repository<Experience>,
+  ) {}
+
+  create(userId: number, createExperienceDto: CreateExperienceDto) {
+    const entity = this.experienceRepository.create({
+      ...createExperienceDto,
+      user: { id: userId },
+    });
+    return this.experienceRepository.save(entity);
   }
 
-  findAll() {
-    return `This action returns all experience`;
+  findAll(userId: number) {
+    return this.experienceRepository.find({
+      where: { user: { id: userId } },
+      order: { startDate: 'DESC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} experience`;
+  async findOne(id: number, userId: number) {
+    const entity = await this.experienceRepository.findOne({
+      where: { id, user: { id: userId } },
+    });
+    if (!entity) throw new NotFoundException(`Experience #${id} not found`);
+    return entity;
   }
 
-  update(id: number, updateExperienceDto: UpdateExperienceDto) {
-    return `This action updates a #${id} experience`;
+  async update(
+    id: number,
+    userId: number,
+    updateExperienceDto: UpdateExperienceDto,
+  ) {
+    const entity = await this.findOne(id, userId);
+    return this.experienceRepository.save({
+      ...entity,
+      ...updateExperienceDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} experience`;
+  async remove(id: number, userId: number) {
+    const entity = await this.findOne(id, userId);
+    return this.experienceRepository.remove(entity);
   }
 }

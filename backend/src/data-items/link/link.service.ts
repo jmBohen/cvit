@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Link } from './entities/link.entity';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 
 @Injectable()
 export class LinkService {
-  create(createLinkDto: CreateLinkDto) {
-    return 'This action adds a new link';
+  constructor(
+    @InjectRepository(Link)
+    private readonly linkRepository: Repository<Link>,
+  ) {}
+
+  create(userId: number, createLinkDto: CreateLinkDto) {
+    const entity = this.linkRepository.create({
+      ...createLinkDto,
+      user: { id: userId },
+    });
+    return this.linkRepository.save(entity);
   }
 
-  findAll() {
-    return `This action returns all link`;
+  findAll(userId: number) {
+    return this.linkRepository.find({
+      where: { user: { id: userId } },
+      order: { label: 'ASC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} link`;
+  async findOne(id: number, userId: number) {
+    const entity = await this.linkRepository.findOne({
+      where: { id, user: { id: userId } },
+    });
+    if (!entity) throw new NotFoundException(`Link #${id} not found`);
+    return entity;
   }
 
-  update(id: number, updateLinkDto: UpdateLinkDto) {
-    return `This action updates a #${id} link`;
+  async update(id: number, userId: number, updateLinkDto: UpdateLinkDto) {
+    const entity = await this.findOne(id, userId);
+    return this.linkRepository.save({ ...entity, ...updateLinkDto });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} link`;
+  async remove(id: number, userId: number) {
+    const entity = await this.findOne(id, userId);
+    return this.linkRepository.remove(entity);
   }
 }

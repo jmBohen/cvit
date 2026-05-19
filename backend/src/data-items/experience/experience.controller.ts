@@ -1,34 +1,54 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ExperienceService } from './experience.service';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @Controller('experience')
 export class ExperienceController {
   constructor(private readonly experienceService: ExperienceService) {}
 
   @Post()
-  create(@Body() createExperienceDto: CreateExperienceDto) {
-    return this.experienceService.create(createExperienceDto);
+  create(@CurrentUser('id') userId: number, @Body() dto: CreateExperienceDto) {
+    return this.experienceService.create(userId, dto);
   }
 
   @Get()
-  findAll() {
-    return this.experienceService.findAll();
+  findAll(@CurrentUser('id') userId: number) {
+    return this.experienceService.findAll(userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.experienceService.findOne(+id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.experienceService.findOne(id, userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExperienceDto: UpdateExperienceDto) {
-    return this.experienceService.update(+id, updateExperienceDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: UpdateExperienceDto,
+  ) {
+    return this.experienceService.update(id, userId, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.experienceService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.experienceService.remove(id, userId);
   }
 }
