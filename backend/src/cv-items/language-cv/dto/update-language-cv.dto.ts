@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLanguageCvDto } from './create-language-cv.dto';
+import { IsInt } from 'class-validator';
 
-export class UpdateLanguageCvDto extends PartialType(CreateLanguageCvDto) {}
+export class UpdateLanguageCvDto {
+  @IsInt()
+  order: number;
+}

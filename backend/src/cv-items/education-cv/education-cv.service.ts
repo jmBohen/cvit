@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { EducationCv } from './entities/education-cv.entity';
+import { CvService } from '../../core/cv/cv.service';
 import { CreateEducationCvDto } from './dto/create-education-cv.dto';
 import { UpdateEducationCvDto } from './dto/update-education-cv.dto';
 
 @Injectable()
 export class EducationCvService {
-  create(createEducationCvDto: CreateEducationCvDto) {
-    return 'This action adds a new educationCv';
+  constructor(
+    @InjectRepository(EducationCv)
+    private readonly educationCvRepository: Repository<EducationCv>,
+    private readonly cvService: CvService,
+  ) {}
+
+  async addToCv(cvId: number, dto: CreateEducationCvDto, userId: number) {
+    await this.cvService.findOne(cvId, userId);
+    const entity = this.educationCvRepository.create({
+      cv: { id: cvId },
+      education: { id: dto.educationId },
+    });
+    return this.educationCvRepository.save(entity);
   }
 
-  findAll() {
-    return `This action returns all educationCv`;
+  findByCv(cvId: number) {
+    return this.educationCvRepository.find({
+      where: { cv: { id: cvId } },
+      relations: { education: true },
+      order: { order: 'ASC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} educationCv`;
+  async remove(id: number, userId: number) {
+    const item = await this.educationCvRepository.findOne({
+      where: { id },
+      relations: { cv: { user: true } },
+    });
+    if (!item || item.cv.user.id !== userId)
+      throw new NotFoundException(`EducationCv #${id} not found`);
+    return this.educationCvRepository.remove(item);
   }
 
-  update(id: number, updateEducationCvDto: UpdateEducationCvDto) {
-    return `This action updates a #${id} educationCv`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} educationCv`;
+  async updateOrder(id: number, dto: UpdateEducationCvDto, userId: number) {
+    const item = await this.educationCvRepository.findOne({
+      where: { id },
+      relations: { cv: { user: true } },
+    });
+    if (!item || item.cv.user.id !== userId)
+      throw new NotFoundException(`EducationCv #${id} not found`);
+    item.order = dto.order;
+    return this.educationCvRepository.save(item);
   }
 }

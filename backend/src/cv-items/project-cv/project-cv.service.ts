@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ProjectCv } from './entities/project-cv.entity';
+import { CvService } from '../../core/cv/cv.service';
 import { CreateProjectCvDto } from './dto/create-project-cv.dto';
 import { UpdateProjectCvDto } from './dto/update-project-cv.dto';
 
 @Injectable()
 export class ProjectCvService {
-  create(createProjectCvDto: CreateProjectCvDto) {
-    return 'This action adds a new projectCv';
+  constructor(
+    @InjectRepository(ProjectCv)
+    private readonly projectCvRepository: Repository<ProjectCv>,
+    private readonly cvService: CvService,
+  ) {}
+
+  async addToCv(cvId: number, dto: CreateProjectCvDto, userId: number) {
+    await this.cvService.findOne(cvId, userId);
+    const entity = this.projectCvRepository.create({
+      cv: { id: cvId },
+      project: { id: dto.projectId },
+    });
+    return this.projectCvRepository.save(entity);
   }
 
-  findAll() {
-    return `This action returns all projectCv`;
+  findByCv(cvId: number) {
+    return this.projectCvRepository.find({
+      where: { cv: { id: cvId } },
+      relations: { project: true },
+      order: { order: 'ASC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} projectCv`;
+  async remove(id: number, userId: number) {
+    const item = await this.projectCvRepository.findOne({
+      where: { id },
+      relations: { cv: { user: true } },
+    });
+    if (!item || item.cv.user.id !== userId)
+      throw new NotFoundException(`ProjectCv #${id} not found`);
+    return this.projectCvRepository.remove(item);
   }
 
-  update(id: number, updateProjectCvDto: UpdateProjectCvDto) {
-    return `This action updates a #${id} projectCv`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} projectCv`;
+  async updateOrder(id: number, dto: UpdateProjectCvDto, userId: number) {
+    const item = await this.projectCvRepository.findOne({
+      where: { id },
+      relations: { cv: { user: true } },
+    });
+    if (!item || item.cv.user.id !== userId)
+      throw new NotFoundException(`ProjectCv #${id} not found`);
+    item.order = dto.order;
+    return this.projectCvRepository.save(item);
   }
 }

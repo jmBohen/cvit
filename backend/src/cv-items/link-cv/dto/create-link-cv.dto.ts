@@ -1,1 +1,6 @@
-export class CreateLinkCvDto {}
+import { IsInt } from 'class-validator';
+
+export class CreateLinkCvDto {
+  @IsInt()
+  linkId: number;
+}

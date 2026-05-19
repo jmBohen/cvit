@@ -7,7 +7,7 @@ export class LinkCv {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Cv, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Cv, (cv) => cv.linkItems, { onDelete: 'CASCADE' })
   cv: Cv;
 
   @ManyToOne(() => Link, { onDelete: 'CASCADE' })

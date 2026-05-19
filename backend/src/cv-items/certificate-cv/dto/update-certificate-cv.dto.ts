@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateCertificateCvDto } from './create-certificate-cv.dto';
+import { IsInt } from 'class-validator';
 
-export class UpdateCertificateCvDto extends PartialType(CreateCertificateCvDto) {}
+export class UpdateCertificateCvDto {
+  @IsInt()
+  order: number;
+}

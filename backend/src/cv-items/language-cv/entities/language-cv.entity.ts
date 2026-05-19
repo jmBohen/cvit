@@ -7,7 +7,7 @@ export class LanguageCv {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Cv, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Cv, (cv) => cv.languageItems, { onDelete: 'CASCADE' })
   cv: Cv;
 
   @ManyToOne(() => Language, { onDelete: 'CASCADE' })

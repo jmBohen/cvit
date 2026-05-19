@@ -7,7 +7,7 @@ export class EducationCv {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Cv, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Cv, (cv) => cv.educationItems, { onDelete: 'CASCADE' })
   cv: Cv;
 
   @ManyToOne(() => Education, { onDelete: 'CASCADE' })

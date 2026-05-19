@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { LinkCvService } from './link-cv.service';
 import { CreateLinkCvDto } from './dto/create-link-cv.dto';
 import { UpdateLinkCvDto } from './dto/update-link-cv.dto';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
-@Controller('link-cv')
+@Controller('cv/:cvId/link')
 export class LinkCvController {
   constructor(private readonly linkCvService: LinkCvService) {}
 
   @Post()
-  create(@Body() createLinkCvDto: CreateLinkCvDto) {
-    return this.linkCvService.create(createLinkCvDto);
+  addToCv(
+    @Param('cvId', ParseIntPipe) cvId: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: CreateLinkCvDto,
+  ) {
+    return this.linkCvService.addToCv(cvId, dto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.linkCvService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.linkCvService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLinkCvDto: UpdateLinkCvDto) {
-    return this.linkCvService.update(+id, updateLinkCvDto);
+  findByCv(@Param('cvId', ParseIntPipe) cvId: number) {
+    return this.linkCvService.findByCv(cvId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.linkCvService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.linkCvService.remove(id, userId);
+  }
+
+  @Patch(':id')
+  updateOrder(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: UpdateLinkCvDto,
+  ) {
+    return this.linkCvService.updateOrder(id, dto, userId);
   }
 }

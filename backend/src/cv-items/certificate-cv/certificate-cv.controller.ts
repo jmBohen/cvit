@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CertificateCvService } from './certificate-cv.service';
 import { CreateCertificateCvDto } from './dto/create-certificate-cv.dto';
 import { UpdateCertificateCvDto } from './dto/update-certificate-cv.dto';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
-@Controller('certificate-cv')
+@Controller('cv/:cvId/certificate')
 export class CertificateCvController {
   constructor(private readonly certificateCvService: CertificateCvService) {}
 
   @Post()
-  create(@Body() createCertificateCvDto: CreateCertificateCvDto) {
-    return this.certificateCvService.create(createCertificateCvDto);
+  addToCv(
+    @Param('cvId', ParseIntPipe) cvId: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: CreateCertificateCvDto,
+  ) {
+    return this.certificateCvService.addToCv(cvId, dto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.certificateCvService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.certificateCvService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCertificateCvDto: UpdateCertificateCvDto) {
-    return this.certificateCvService.update(+id, updateCertificateCvDto);
+  findByCv(@Param('cvId', ParseIntPipe) cvId: number) {
+    return this.certificateCvService.findByCv(cvId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.certificateCvService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.certificateCvService.remove(id, userId);
+  }
+
+  @Patch(':id')
+  updateOrder(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: UpdateCertificateCvDto,
+  ) {
+    return this.certificateCvService.updateOrder(id, dto, userId);
   }
 }

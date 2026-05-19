@@ -7,7 +7,7 @@ export class ActivityCv {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Cv, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Cv, (cv) => cv.activityItems, { onDelete: 'CASCADE' })
   cv: Cv;
 
   @ManyToOne(() => Activity, { onDelete: 'CASCADE' })

@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { LanguageCv } from './entities/language-cv.entity';
+import { CvService } from '../../core/cv/cv.service';
 import { CreateLanguageCvDto } from './dto/create-language-cv.dto';
 import { UpdateLanguageCvDto } from './dto/update-language-cv.dto';
 
 @Injectable()
 export class LanguageCvService {
-  create(createLanguageCvDto: CreateLanguageCvDto) {
-    return 'This action adds a new languageCv';
+  constructor(
+    @InjectRepository(LanguageCv)
+    private readonly languageCvRepository: Repository<LanguageCv>,
+    private readonly cvService: CvService,
+  ) {}
+
+  async addToCv(cvId: number, dto: CreateLanguageCvDto, userId: number) {
+    await this.cvService.findOne(cvId, userId);
+    const entity = this.languageCvRepository.create({
+      cv: { id: cvId },
+      language: { id: dto.languageId },
+    });
+    return this.languageCvRepository.save(entity);
   }
 
-  findAll() {
-    return `This action returns all languageCv`;
+  findByCv(cvId: number) {
+    return this.languageCvRepository.find({
+      where: { cv: { id: cvId } },
+      relations: { language: true },
+      order: { order: 'ASC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} languageCv`;
+  async remove(id: number, userId: number) {
+    const item = await this.languageCvRepository.findOne({
+      where: { id },
+      relations: { cv: { user: true } },
+    });
+    if (!item || item.cv.user.id !== userId)
+      throw new NotFoundException(`LanguageCv #${id} not found`);
+    return this.languageCvRepository.remove(item);
   }
 
-  update(id: number, updateLanguageCvDto: UpdateLanguageCvDto) {
-    return `This action updates a #${id} languageCv`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} languageCv`;
+  async updateOrder(id: number, dto: UpdateLanguageCvDto, userId: number) {
+    const item = await this.languageCvRepository.findOne({
+      where: { id },
+      relations: { cv: { user: true } },
+    });
+    if (!item || item.cv.user.id !== userId)
+      throw new NotFoundException(`LanguageCv #${id} not found`);
+    item.order = dto.order;
+    return this.languageCvRepository.save(item);
   }
 }

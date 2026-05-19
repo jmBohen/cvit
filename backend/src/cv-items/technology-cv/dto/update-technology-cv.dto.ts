@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateTechnologyCvDto } from './create-technology-cv.dto';
+import { IsInt } from 'class-validator';
 
-export class UpdateTechnologyCvDto extends PartialType(CreateTechnologyCvDto) {}
+export class UpdateTechnologyCvDto {
+  @IsInt()
+  order: number;
+}

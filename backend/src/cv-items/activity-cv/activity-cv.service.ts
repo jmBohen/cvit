@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ActivityCv } from './entities/activity-cv.entity';
+import { CvService } from '../../core/cv/cv.service';
 import { CreateActivityCvDto } from './dto/create-activity-cv.dto';
 import { UpdateActivityCvDto } from './dto/update-activity-cv.dto';
 
 @Injectable()
 export class ActivityCvService {
-  create(createActivityCvDto: CreateActivityCvDto) {
-    return 'This action adds a new activityCv';
+  constructor(
+    @InjectRepository(ActivityCv)
+    private readonly activityCvRepository: Repository<ActivityCv>,
+    private readonly cvService: CvService,
+  ) {}
+
+  async addToCv(cvId: number, dto: CreateActivityCvDto, userId: number) {
+    await this.cvService.findOne(cvId, userId);
+    const entity = this.activityCvRepository.create({
+      cv: { id: cvId },
+      activity: { id: dto.activityId },
+    });
+    return this.activityCvRepository.save(entity);
   }
 
-  findAll() {
-    return `This action returns all activityCv`;
+  findByCv(cvId: number) {
+    return this.activityCvRepository.find({
+      where: { cv: { id: cvId } },
+      relations: { activity: true },
+      order: { order: 'ASC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} activityCv`;
+  async remove(id: number, userId: number) {
+    const item = await this.activityCvRepository.findOne({
+      where: { id },
+      relations: { cv: { user: true } },
+    });
+    if (!item || item.cv.user.id !== userId)
+      throw new NotFoundException(`ActivityCv #${id} not found`);
+    return this.activityCvRepository.remove(item);
   }
 
-  update(id: number, updateActivityCvDto: UpdateActivityCvDto) {
-    return `This action updates a #${id} activityCv`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} activityCv`;
+  async updateOrder(id: number, dto: UpdateActivityCvDto, userId: number) {
+    const item = await this.activityCvRepository.findOne({
+      where: { id },
+      relations: { cv: { user: true } },
+    });
+    if (!item || item.cv.user.id !== userId)
+      throw new NotFoundException(`ActivityCv #${id} not found`);
+    item.order = dto.order;
+    return this.activityCvRepository.save(item);
   }
 }

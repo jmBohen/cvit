@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ActivityCvService } from './activity-cv.service';
 import { CreateActivityCvDto } from './dto/create-activity-cv.dto';
 import { UpdateActivityCvDto } from './dto/update-activity-cv.dto';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
-@Controller('activity-cv')
+@Controller('cv/:cvId/activity')
 export class ActivityCvController {
   constructor(private readonly activityCvService: ActivityCvService) {}
 
   @Post()
-  create(@Body() createActivityCvDto: CreateActivityCvDto) {
-    return this.activityCvService.create(createActivityCvDto);
+  addToCv(
+    @Param('cvId', ParseIntPipe) cvId: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: CreateActivityCvDto,
+  ) {
+    return this.activityCvService.addToCv(cvId, dto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.activityCvService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.activityCvService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateActivityCvDto: UpdateActivityCvDto) {
-    return this.activityCvService.update(+id, updateActivityCvDto);
+  findByCv(@Param('cvId', ParseIntPipe) cvId: number) {
+    return this.activityCvService.findByCv(cvId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.activityCvService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.activityCvService.remove(id, userId);
+  }
+
+  @Patch(':id')
+  updateOrder(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: UpdateActivityCvDto,
+  ) {
+    return this.activityCvService.updateOrder(id, dto, userId);
   }
 }

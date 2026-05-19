@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { TechnologyCvService } from './technology-cv.service';
 import { CreateTechnologyCvDto } from './dto/create-technology-cv.dto';
 import { UpdateTechnologyCvDto } from './dto/update-technology-cv.dto';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
-@Controller('technology-cv')
+@Controller('cv/:cvId/technology')
 export class TechnologyCvController {
   constructor(private readonly technologyCvService: TechnologyCvService) {}
 
   @Post()
-  create(@Body() createTechnologyCvDto: CreateTechnologyCvDto) {
-    return this.technologyCvService.create(createTechnologyCvDto);
+  addToCv(
+    @Param('cvId', ParseIntPipe) cvId: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: CreateTechnologyCvDto,
+  ) {
+    return this.technologyCvService.addToCv(cvId, dto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.technologyCvService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.technologyCvService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTechnologyCvDto: UpdateTechnologyCvDto) {
-    return this.technologyCvService.update(+id, updateTechnologyCvDto);
+  findByCv(@Param('cvId', ParseIntPipe) cvId: number) {
+    return this.technologyCvService.findByCv(cvId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.technologyCvService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+  ) {
+    return this.technologyCvService.remove(id, userId);
+  }
+
+  @Patch(':id')
+  updateOrder(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('id') userId: number,
+    @Body() dto: UpdateTechnologyCvDto,
+  ) {
+    return this.technologyCvService.updateOrder(id, dto, userId);
   }
 }
