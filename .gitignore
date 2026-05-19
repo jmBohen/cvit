@@ -28,3 +28,6 @@ docs/notes/
 
 # REST client variables (contain tokens)
 rest/_vars.http
+
+# VS Code local settings (contain tokens)
+.vscode/settings.json
