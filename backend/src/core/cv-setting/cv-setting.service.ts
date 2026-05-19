@@ -1,26 +1,27 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CvSetting } from './entities/cv-setting.entity';
 import { CreateCvSettingDto } from './dto/create-cv-setting.dto';
-import { UpdateCvSettingDto } from './dto/update-cv-setting.dto';
 
 @Injectable()
 export class CvSettingService {
-  create(createCvSettingDto: CreateCvSettingDto) {
-    return 'This action adds a new cvSetting';
+  constructor(
+    @InjectRepository(CvSetting)
+    private readonly settingRepository: Repository<CvSetting>,
+  ) {}
+
+  async upsert(cvId: number, dto: CreateCvSettingDto) {
+    let setting = await this.settingRepository.findOne({
+      where: { cv: { id: cvId } },
+    });
+    if (!setting) {
+      setting = this.settingRepository.create({ cv: { id: cvId } });
+    }
+    return this.settingRepository.save({ ...setting, ...dto });
   }
 
-  findAll() {
-    return `This action returns all cvSetting`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} cvSetting`;
-  }
-
-  update(id: number, updateCvSettingDto: UpdateCvSettingDto) {
-    return `This action updates a #${id} cvSetting`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} cvSetting`;
+  findByCv(cvId: number) {
+    return this.settingRepository.findOne({ where: { cv: { id: cvId } } });
   }
 }
