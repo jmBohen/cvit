@@ -1,0 +1,31 @@
+# Dodaj certyfikat do CV
+POST {{baseUrl}}/cv/1/certificate
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "certificateId": 1
+}
+
+###
+
+# Pobierz certyfikaty w CV
+GET {{baseUrl}}/cv/1/certificate
+Authorization: Bearer {{token}}
+
+###
+
+# Usuń certyfikat z CV
+DELETE {{baseUrl}}/cv/1/certificate/1
+Authorization: Bearer {{token}}
+
+###
+
+# Zmień kolejność
+PATCH {{baseUrl}}/cv/1/certificate/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "order": 2
+}

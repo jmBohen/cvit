@@ -25,3 +25,6 @@ lerna-debug.log*
 
 # local dev notes
 docs/notes/
+
+# REST client variables (contain tokens)
+rest/_vars.http

@@ -1,0 +1,11 @@
+POST {{baseUrl}}/project
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "CViT",
+  "description": "Aplikacja do generowania CV.",
+  "url": "https://github.com/jankowalski/cvit",
+  "startDate": "2025-01-01",
+  "isCurrent": true
+}

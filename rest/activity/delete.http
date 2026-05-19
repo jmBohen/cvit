@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/activity/1
+Authorization: Bearer {{token}}

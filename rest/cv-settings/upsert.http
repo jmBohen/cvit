@@ -1,0 +1,9 @@
+PUT {{baseUrl}}/cv/1/settings
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "template": "modern",
+  "language": "pl",
+  "accentColor": "#3B82F6"
+}

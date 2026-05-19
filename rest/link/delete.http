@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/link/1
+Authorization: Bearer {{token}}

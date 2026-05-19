@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/experience/1
+Authorization: Bearer {{token}}

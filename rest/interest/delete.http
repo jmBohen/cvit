@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/interest/1
+Authorization: Bearer {{token}}

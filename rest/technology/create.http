@@ -1,0 +1,9 @@
+POST {{baseUrl}}/technology
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "TypeScript",
+  "level": "advanced",
+  "category": "Backend"
+}

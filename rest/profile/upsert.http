@@ -1,0 +1,11 @@
+PUT {{baseUrl}}/profile
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "phone": "+48 123 456 789",
+  "city": "Warszawa",
+  "country": "Polska",
+  "githubUrl": "https://github.com/jankowalski",
+  "linkedinUrl": "https://linkedin.com/in/jankowalski"
+}

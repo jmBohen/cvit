@@ -1,0 +1,7 @@
+PATCH {{baseUrl}}/project/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "description": "Platforma do tworzenia i eksportu CV w formacie PDF."
+}

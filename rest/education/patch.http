@@ -1,0 +1,9 @@
+PATCH {{baseUrl}}/education/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "degree": "magister",
+  "isCurrent": false,
+  "endDate": "2025-06-30"
+}

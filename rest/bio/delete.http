@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/bio/1
+Authorization: Bearer {{token}}

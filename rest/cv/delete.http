@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/cv/1
+Authorization: Bearer {{token}}

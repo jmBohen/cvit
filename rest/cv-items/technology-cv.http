@@ -1,0 +1,31 @@
+# Dodaj technologię do CV
+POST {{baseUrl}}/cv/1/technology
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "technologyId": 1
+}
+
+###
+
+# Pobierz technologie w CV
+GET {{baseUrl}}/cv/1/technology
+Authorization: Bearer {{token}}
+
+###
+
+# Usuń technologię z CV
+DELETE {{baseUrl}}/cv/1/technology/1
+Authorization: Bearer {{token}}
+
+###
+
+# Zmień kolejność
+PATCH {{baseUrl}}/cv/1/technology/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "order": 2
+}

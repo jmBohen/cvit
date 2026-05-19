@@ -1,0 +1,2 @@
+GET {{baseUrl}}/language
+Authorization: Bearer {{token}}

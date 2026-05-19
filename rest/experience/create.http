@@ -1,0 +1,13 @@
+POST {{baseUrl}}/experience
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "company": "Przykładowa Sp. z o.o.",
+  "position": "Junior Backend Developer",
+  "startDate": "2023-07-01",
+  "isCurrent": true,
+  "description": "Rozwój API w NestJS, integracja z PostgreSQL.",
+  "city": "Warszawa",
+  "country": "Polska"
+}

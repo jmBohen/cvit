@@ -1,0 +1,2 @@
+GET {{baseUrl}}/bio
+Authorization: Bearer {{token}}

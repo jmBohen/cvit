@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/education/1
+Authorization: Bearer {{token}}

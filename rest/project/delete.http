@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/project/1
+Authorization: Bearer {{token}}
