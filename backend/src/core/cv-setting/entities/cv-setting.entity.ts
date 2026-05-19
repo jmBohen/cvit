@@ -1,12 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Cv } from '../../cv/entities/cv.entity';
+import type { Cv } from '../../cv/entities/cv.entity';
 
 @Entity()
 export class CvSetting {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Cv, (cv) => cv.settings, { onDelete: 'CASCADE' })
+  @ManyToOne('Cv', 'settings', { onDelete: 'CASCADE' })
   cv: Cv;
 
   @Column({ default: 'default' })
