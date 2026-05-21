@@ -37,7 +37,13 @@ describe('CvSettingService', () => {
     });
 
     it('aktualizuje istniejące ustawienia', async () => {
-      const existing = { id: 1, cv: { id: 3 }, template: 'basic', language: 'pl', accentColor: '#000' };
+      const existing = {
+        id: 1,
+        cv: { id: 3 },
+        template: 'basic',
+        language: 'pl',
+        accentColor: '#000',
+      };
       const dto = { template: 'modern', language: 'en', accentColor: '#fff' };
       mockRepo.findOne.mockResolvedValue(existing);
       mockRepo.save.mockResolvedValue({ ...existing, ...dto });

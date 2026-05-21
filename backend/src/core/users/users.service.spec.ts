@@ -28,7 +28,11 @@ describe('UsersService', () => {
 
   describe('create', () => {
     it('tworzy użytkownika z zahashowanym hasłem', async () => {
-      const dto = { firstName: 'Jan', email: 'jan@test.com', password: 'Pass1!' };
+      const dto = {
+        firstName: 'Jan',
+        email: 'jan@test.com',
+        password: 'Pass1!',
+      };
       const savedUser = { id: 1, ...dto, password: 'hashed' };
       mockRepo.create.mockReturnValue(savedUser);
       mockRepo.save.mockResolvedValue(savedUser);
@@ -47,7 +51,11 @@ describe('UsersService', () => {
       mockRepo.create.mockReturnValue({});
       mockRepo.save.mockRejectedValue({ code: '23505' });
       await expect(
-        service.create({ firstName: 'X', email: 'dup@test.com', password: 'P' }),
+        service.create({
+          firstName: 'X',
+          email: 'dup@test.com',
+          password: 'P',
+        }),
       ).rejects.toThrow(ConflictException);
     });
 
@@ -132,7 +140,10 @@ describe('UsersService', () => {
 
   describe('findByEmail', () => {
     it('zwraca użytkownika po emailu', async () => {
-      mockRepo.findOne.mockResolvedValue({ email: 'a@b.com', firstName: 'Jan' });
+      mockRepo.findOne.mockResolvedValue({
+        email: 'a@b.com',
+        firstName: 'Jan',
+      });
       const result = await service.findByEmail('a@b.com');
       expect(result).toEqual({ email: 'a@b.com', firstName: 'Jan' });
     });

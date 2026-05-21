@@ -2,7 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CertificateCvController } from './certificate-cv.controller';
 import { CertificateCvService } from './certificate-cv.service';
 
-const mockService = { addToCv: jest.fn(), findByCv: jest.fn(), remove: jest.fn(), updateOrder: jest.fn() };
+const mockService = {
+  addToCv: jest.fn(),
+  findByCv: jest.fn(),
+  remove: jest.fn(),
+  updateOrder: jest.fn(),
+};
 
 describe('CertificateCvController', () => {
   let controller: CertificateCvController;
@@ -16,11 +21,17 @@ describe('CertificateCvController', () => {
     jest.clearAllMocks();
   });
 
-  it('powinien być zdefiniowany', () => { expect(controller).toBeDefined(); });
+  it('powinien być zdefiniowany', () => {
+    expect(controller).toBeDefined();
+  });
   it('addToCv deleguje do serwisu', async () => {
     mockService.addToCv.mockResolvedValue({ id: 1 });
     await controller.addToCv(1, 5, { certificateId: 2 });
-    expect(mockService.addToCv).toHaveBeenCalledWith(1, { certificateId: 2 }, 5);
+    expect(mockService.addToCv).toHaveBeenCalledWith(
+      1,
+      { certificateId: 2 },
+      5,
+    );
   });
   it('findByCv deleguje do serwisu', async () => {
     mockService.findByCv.mockResolvedValue([]);

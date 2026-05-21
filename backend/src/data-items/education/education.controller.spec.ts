@@ -2,7 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EducationController } from './education.controller';
 import { EducationService } from './education.service';
 
-const mockService = { create: jest.fn(), findAll: jest.fn(), findOne: jest.fn(), update: jest.fn(), remove: jest.fn() };
+const mockService = {
+  create: jest.fn(),
+  findAll: jest.fn(),
+  findOne: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn(),
+};
 
 describe('EducationController', () => {
   let controller: EducationController;
@@ -16,7 +22,9 @@ describe('EducationController', () => {
     jest.clearAllMocks();
   });
 
-  it('powinien być zdefiniowany', () => { expect(controller).toBeDefined(); });
+  it('powinien być zdefiniowany', () => {
+    expect(controller).toBeDefined();
+  });
   it('create deleguje do serwisu', async () => {
     mockService.create.mockResolvedValue({ id: 1 });
     await controller.create(5, {});

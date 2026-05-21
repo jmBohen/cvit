@@ -54,6 +54,9 @@ describe('UsersController', () => {
       newPassword1: 'B',
       newPassword2: 'B',
     });
-    expect(mockService.changePassword).toHaveBeenCalledWith(1, expect.any(Object));
+    expect(mockService.changePassword).toHaveBeenCalledWith(
+      1,
+      expect.any(Object),
+    );
   });
 });

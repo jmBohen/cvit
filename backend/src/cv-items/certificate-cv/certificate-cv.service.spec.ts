@@ -5,7 +5,13 @@ import { CertificateCvService } from './certificate-cv.service';
 import { CertificateCv } from './entities/certificate-cv.entity';
 import { CvService } from '../../core/cv/cv.service';
 
-const mockRepo = { create: jest.fn(), save: jest.fn(), find: jest.fn(), findOne: jest.fn(), remove: jest.fn() };
+const mockRepo = {
+  create: jest.fn(),
+  save: jest.fn(),
+  find: jest.fn(),
+  findOne: jest.fn(),
+  remove: jest.fn(),
+};
 const mockCvService = { findOne: jest.fn() };
 
 describe('CertificateCvService', () => {
@@ -23,7 +29,9 @@ describe('CertificateCvService', () => {
     jest.clearAllMocks();
   });
 
-  it('powinien być zdefiniowany', () => { expect(service).toBeDefined(); });
+  it('powinien być zdefiniowany', () => {
+    expect(service).toBeDefined();
+  });
 
   it('addToCv: dodaje certificate do CV', async () => {
     mockCvService.findOne.mockResolvedValue({ id: 1 });
@@ -37,7 +45,9 @@ describe('CertificateCvService', () => {
 
   it('addToCv: propaguje NotFoundException gdy CV nie istnieje', async () => {
     mockCvService.findOne.mockRejectedValue(new NotFoundException());
-    await expect(service.addToCv(99, { certificateId: 1 }, 5)).rejects.toThrow(NotFoundException);
+    await expect(service.addToCv(99, { certificateId: 1 }, 5)).rejects.toThrow(
+      NotFoundException,
+    );
   });
 
   it('findByCv: zwraca elementy', async () => {
@@ -72,6 +82,8 @@ describe('CertificateCvService', () => {
 
   it('updateOrder: rzuca NotFoundException gdy inny użytkownik', async () => {
     mockRepo.findOne.mockResolvedValue({ id: 10, cv: { user: { id: 99 } } });
-    await expect(service.updateOrder(10, { order: 1 }, 5)).rejects.toThrow(NotFoundException);
+    await expect(service.updateOrder(10, { order: 1 }, 5)).rejects.toThrow(
+      NotFoundException,
+    );
   });
 });

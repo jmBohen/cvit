@@ -4,7 +4,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { EducationService } from './education.service';
 import { Education } from './entities/education.entity';
 
-const mockRepo = { create: jest.fn(), save: jest.fn(), find: jest.fn(), findOne: jest.fn(), remove: jest.fn() };
+const mockRepo = {
+  create: jest.fn(),
+  save: jest.fn(),
+  find: jest.fn(),
+  findOne: jest.fn(),
+  remove: jest.fn(),
+};
 
 describe('EducationService', () => {
   let service: EducationService;
@@ -20,7 +26,9 @@ describe('EducationService', () => {
     jest.clearAllMocks();
   });
 
-  it('powinien być zdefiniowany', () => { expect(service).toBeDefined(); });
+  it('powinien być zdefiniowany', () => {
+    expect(service).toBeDefined();
+  });
   it('create: tworzy i zapisuje', async () => {
     const entity = { id: 1, user: { id: 5 } };
     mockRepo.create.mockReturnValue(entity);

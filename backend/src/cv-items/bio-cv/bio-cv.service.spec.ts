@@ -55,7 +55,10 @@ describe('BioCvService', () => {
 
   describe('findByCv', () => {
     it('zwraca elementy bio CV posortowane po order', async () => {
-      const items = [{ id: 1, order: 0 }, { id: 2, order: 1 }];
+      const items = [
+        { id: 1, order: 0 },
+        { id: 2, order: 1 },
+      ];
       mockRepo.find.mockResolvedValue(items);
       const result = await service.findByCv(1);
       expect(mockRepo.find).toHaveBeenCalledWith({

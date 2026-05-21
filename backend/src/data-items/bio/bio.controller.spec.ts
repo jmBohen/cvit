@@ -29,7 +29,10 @@ describe('BioController', () => {
   it('create deleguje do serwisu', async () => {
     mockService.create.mockResolvedValue({ id: 1 });
     await controller.create(5, { firstName: 'Jan', lastName: 'Kowalski' });
-    expect(mockService.create).toHaveBeenCalledWith(5, { firstName: 'Jan', lastName: 'Kowalski' });
+    expect(mockService.create).toHaveBeenCalledWith(5, {
+      firstName: 'Jan',
+      lastName: 'Kowalski',
+    });
   });
 
   it('findAll deleguje do serwisu', async () => {
@@ -47,7 +50,9 @@ describe('BioController', () => {
   it('update deleguje do serwisu', async () => {
     mockService.update.mockResolvedValue({ id: 1 });
     await controller.update(1, 5, { firstName: 'Nowe' });
-    expect(mockService.update).toHaveBeenCalledWith(1, 5, { firstName: 'Nowe' });
+    expect(mockService.update).toHaveBeenCalledWith(1, 5, {
+      firstName: 'Nowe',
+    });
   });
 
   it('remove deleguje do serwisu', async () => {

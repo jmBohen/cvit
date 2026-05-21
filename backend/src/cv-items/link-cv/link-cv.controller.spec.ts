@@ -2,7 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LinkCvController } from './link-cv.controller';
 import { LinkCvService } from './link-cv.service';
 
-const mockService = { addToCv: jest.fn(), findByCv: jest.fn(), remove: jest.fn(), updateOrder: jest.fn() };
+const mockService = {
+  addToCv: jest.fn(),
+  findByCv: jest.fn(),
+  remove: jest.fn(),
+  updateOrder: jest.fn(),
+};
 
 describe('LinkCvController', () => {
   let controller: LinkCvController;
@@ -16,7 +21,9 @@ describe('LinkCvController', () => {
     jest.clearAllMocks();
   });
 
-  it('powinien być zdefiniowany', () => { expect(controller).toBeDefined(); });
+  it('powinien być zdefiniowany', () => {
+    expect(controller).toBeDefined();
+  });
   it('addToCv deleguje do serwisu', async () => {
     mockService.addToCv.mockResolvedValue({ id: 1 });
     await controller.addToCv(1, 5, { linkId: 2 });

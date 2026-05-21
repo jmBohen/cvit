@@ -2,7 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TechnologyCvController } from './technology-cv.controller';
 import { TechnologyCvService } from './technology-cv.service';
 
-const mockService = { addToCv: jest.fn(), findByCv: jest.fn(), remove: jest.fn(), updateOrder: jest.fn() };
+const mockService = {
+  addToCv: jest.fn(),
+  findByCv: jest.fn(),
+  remove: jest.fn(),
+  updateOrder: jest.fn(),
+};
 
 describe('TechnologyCvController', () => {
   let controller: TechnologyCvController;
@@ -16,7 +21,9 @@ describe('TechnologyCvController', () => {
     jest.clearAllMocks();
   });
 
-  it('powinien być zdefiniowany', () => { expect(controller).toBeDefined(); });
+  it('powinien być zdefiniowany', () => {
+    expect(controller).toBeDefined();
+  });
   it('addToCv deleguje do serwisu', async () => {
     mockService.addToCv.mockResolvedValue({ id: 1 });
     await controller.addToCv(1, 5, { technologyId: 2 });
