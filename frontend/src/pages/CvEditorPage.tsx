@@ -4,6 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { getCvFull } from '../api/cv';
 import TechnologiesTab from './cv-editor/TechnologiesTab';
 import ExperienceTab from './cv-editor/ExperienceTab';
+import EducationTab from './cv-editor/EducationTab';
+import ProjectsTab from './cv-editor/ProjectsTab';
+import CertificatesTab from './cv-editor/CertificatesTab';
+import LanguagesTab from './cv-editor/LanguagesTab';
 
 export default function CvEditorPage() {
   const { id } = useParams<{ id: string }>();
@@ -39,8 +43,10 @@ export default function CvEditorPage() {
       <div style={{ display: 'flex', gap: '20px' }}>
         {activeTab === 'technologies' && <TechnologiesTab cvId={cvId} />}
         {activeTab === 'experience' && <ExperienceTab cvId={cvId} />}
-        {/* Pozostałe zakładki zostaną dodane w miarę potrzeby */}
-        {!['technologies', 'experience'].includes(activeTab) && <div>Zakładka w przygotowaniu...</div>}
+        {activeTab === 'education' && <EducationTab cvId={cvId} />}
+        {activeTab === 'projects' && <ProjectsTab cvId={cvId} />}
+        {activeTab === 'certificates' && <CertificatesTab cvId={cvId} />}
+        {activeTab === 'languages' && <LanguagesTab cvId={cvId} />}
       </div>
     </div>
   );
