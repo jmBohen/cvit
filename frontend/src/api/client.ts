@@ -17,7 +17,8 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Nie wylogowuj/nie odświeżaj strony, jeśli błąd 401 pochodzi z próby logowania
+    if (error.response?.status === 401 && error.config?.url !== '/auth/login') {
       localStorage.removeItem('access_token')
       window.location.href = '/login'
     }
