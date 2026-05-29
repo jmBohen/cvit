@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getCvFull } from '../api/cv';
 import TechnologiesTab from './cv-editor/TechnologiesTab';
@@ -12,6 +12,7 @@ import LanguagesTab from './cv-editor/LanguagesTab';
 export default function CvEditorPage() {
   const { id } = useParams<{ id: string }>();
   const cvId = Number(id);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('technologies');
 
   const { data: cv, isLoading } = useQuery({
