@@ -5,6 +5,7 @@ import DashboardPage from '../pages/DashboardPage';
 import CvEditorPage from '../pages/CvEditorPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import ProtectedRoute from './ProtectedRoute';
+import AppLayout from '../components/layout/AppLayout';
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -12,8 +13,13 @@ export const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
-      { path: '/', element: <DashboardPage /> },
-      { path: '/cv/:id', element: <CvEditorPage /> },
+      {
+        element: <AppLayout />,
+        children: [
+          { path: '/', element: <DashboardPage /> },
+          { path: '/cv/:id', element: <CvEditorPage /> },
+        ]
+      }
     ],
   },
   { path: '*', element: <NotFoundPage /> },
