@@ -58,57 +58,86 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
-      <h2>Rejestracja</h2>
-      {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
-      <form onSubmit={handleSubmit} noValidate>
-        <div style={{ marginBottom: '10px' }}>
-          <label htmlFor="firstName" style={{ display: 'block', marginBottom: '5px' }}>Imię:</label>
-          <input
-            id="firstName"
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            style={{ width: '100%', padding: '8px' }}
-          />
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Dołącz do nas</h2>
+          <p className="mt-2 text-sm text-slate-500">Utwórz konto, aby rozpocząć tworzenie CV</p>
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label htmlFor="email" style={{ display: 'block', marginBottom: '5px' }}>Email:</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: '100%', padding: '8px' }}
-          />
+
+        {error && (
+          <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 mb-1">Imię</label>
+            <input
+              id="firstName"
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="Twoje imię"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">Adres Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="twoj@email.com"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">Hasło</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="passwordConfirm" className="block text-sm font-medium text-slate-700 mb-1">Potwierdź hasło</label>
+            <input
+              id="passwordConfirm"
+              type="password"
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed transition-colors mt-6"
+          >
+            {isLoading ? 'Rejestrowanie...' : 'Zarejestruj się'}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-600">
+            Masz już konto?{' '}
+            <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+              Zaloguj się
+            </Link>
+          </p>
         </div>
-        <div style={{ marginBottom: '10px' }}>
-          <label htmlFor="password" style={{ display: 'block', marginBottom: '5px' }}>Hasło:</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: '100%', padding: '8px' }}
-          />
-        </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="passwordConfirm" style={{ display: 'block', marginBottom: '5px' }}>Potwierdź hasło:</label>
-          <input
-            id="passwordConfirm"
-            type="password"
-            value={passwordConfirm}
-            onChange={(e) => setPasswordConfirm(e.target.value)}
-            style={{ width: '100%', padding: '8px' }}
-          />
-        </div>
-        <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '10px', marginBottom: '10px' }}>
-          {isLoading ? 'Rejestrowanie...' : 'Zarejestruj się'}
-        </button>
-      </form>
-      <p style={{ textAlign: 'center' }}>
-        Masz już konto? <Link to="/login">Zaloguj się</Link>
-      </p>
+      </div>
     </div>
   );
 }
