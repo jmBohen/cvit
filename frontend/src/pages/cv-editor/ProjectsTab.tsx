@@ -193,12 +193,21 @@ export default function ProjectsTab({ cvId }: { cvId: number }) {
         <ul className="space-y-4">
           {cvProjects?.length === 0 && <p className="text-sm text-slate-500 italic">Zaznacz projekty w lewej kolumnie.</p>}
           {cvProjects?.map((item) => (
-            <li key={item.id} className="bg-white p-4 rounded-md shadow-sm border border-slate-200">
-              <h4 className="text-base font-bold text-slate-900 flex items-center">
-                <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                {item.project.name}
-              </h4>
-              {item.project.techStack && <p className="text-xs text-slate-500 mt-1 font-mono">{item.project.techStack}</p>}
+            <li key={item.id} className="bg-white p-4 rounded-md shadow-sm border border-slate-200 flex justify-between items-start group">
+              <div>
+                <h4 className="text-base font-bold text-slate-900 flex items-center">
+                  <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                  {item.project.name}
+                </h4>
+                {item.project.techStack && <p className="text-xs text-slate-500 mt-1 font-mono">{item.project.techStack}</p>}
+              </div>
+              <button 
+                onClick={() => toggleMutation.mutate({ projId: item.project.id, inCv: true })}
+                className="text-slate-300 hover:text-red-500 transition-colors p-1"
+                title="Usuń z CV"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
             </li>
           ))}
         </ul>

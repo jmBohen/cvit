@@ -193,11 +193,20 @@ export default function ExperienceTab({ cvId }: { cvId: number }) {
         <ul className="space-y-4">
           {cvExperiences?.length === 0 && <p className="text-sm text-slate-500 italic">Wybierz doświadczenie z lewej kolumny.</p>}
           {cvExperiences?.map((item) => (
-            <li key={item.id} className="relative pl-6 border-l-2 border-blue-500">
-              <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[7px] top-1.5 border-2 border-white"></div>
-              <h4 className="text-base font-bold text-slate-900">{item.experience.position}</h4>
-              <p className="text-sm font-medium text-slate-700">{item.experience.company}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{item.experience.startDate} - {item.experience.isCurrent ? 'Obecnie' : item.experience.endDate}</p>
+            <li key={item.id} className="relative pl-6 border-l-2 border-blue-500 flex justify-between items-start group">
+              <div>
+                <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[7px] top-1.5 border-2 border-white"></div>
+                <h4 className="text-base font-bold text-slate-900">{item.experience.position}</h4>
+                <p className="text-sm font-medium text-slate-700">{item.experience.company}</p>
+                <p className="text-xs text-slate-500 mt-0.5">{item.experience.startDate} - {item.experience.isCurrent ? 'Obecnie' : item.experience.endDate}</p>
+              </div>
+              <button 
+                onClick={() => toggleMutation.mutate({ expId: item.experience.id, inCv: true })}
+                className="text-slate-300 hover:text-red-500 transition-colors p-1"
+                title="Usuń z CV"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
             </li>
           ))}
         </ul>

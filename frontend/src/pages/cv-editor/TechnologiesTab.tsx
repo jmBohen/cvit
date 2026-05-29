@@ -157,14 +157,23 @@ export default function TechnologiesTab({ cvId }: { cvId: number }) {
         <ul className="space-y-3">
           {cvTechnologies?.length === 0 && <p className="text-sm text-slate-500 italic">Wybierz technologie z lewej kolumny.</p>}
           {cvTechnologies?.map((item) => (
-            <li key={item.id} className="flex items-center bg-white p-3 rounded-md shadow-sm border border-slate-200">
-              <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <div>
-                <span className="text-sm font-medium text-slate-900">{item.technology.name}</span>
-                <span className="text-sm text-slate-500 ml-2">({item.technology.level})</span>
+            <li key={item.id} className="flex justify-between items-center bg-white p-3 rounded-md shadow-sm border border-slate-200 group">
+              <div className="flex items-center">
+                <svg className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <span className="text-sm font-medium text-slate-900">{item.technology.name}</span>
+                  <span className="text-sm text-slate-500 ml-2">({item.technology.level})</span>
+                </div>
               </div>
+              <button 
+                onClick={() => toggleMutation.mutate({ techId: item.technology.id, inCv: true })}
+                className="text-slate-300 hover:text-red-500 transition-colors p-1"
+                title="Usuń z CV"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
             </li>
           ))}
         </ul>
