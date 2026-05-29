@@ -1,0 +1,31 @@
+# Dodaj projekt do CV
+POST {{baseUrl}}/cv/1/project
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "projectId": 1
+}
+
+###
+
+# Pobierz projekty w CV
+GET {{baseUrl}}/cv/1/project
+Authorization: Bearer {{token}}
+
+###
+
+# Usuń projekt z CV
+DELETE {{baseUrl}}/cv/1/project/1
+Authorization: Bearer {{token}}
+
+###
+
+# Zmień kolejność
+PATCH {{baseUrl}}/cv/1/project/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "order": 2
+}

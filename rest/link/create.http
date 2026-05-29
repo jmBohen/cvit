@@ -1,0 +1,8 @@
+POST {{baseUrl}}/link
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "label": "Portfolio",
+  "url": "https://jankowalski.dev"
+}

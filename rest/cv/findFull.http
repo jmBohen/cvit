@@ -1,0 +1,2 @@
+GET {{baseUrl}}/cv/1/full
+Authorization: Bearer {{token}}

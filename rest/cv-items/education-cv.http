@@ -1,0 +1,31 @@
+# Dodaj wykształcenie do CV
+POST {{baseUrl}}/cv/1/education
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "educationId": 1
+}
+
+###
+
+# Pobierz wykształcenie w CV
+GET {{baseUrl}}/cv/1/education
+Authorization: Bearer {{token}}
+
+###
+
+# Usuń wykształcenie z CV
+DELETE {{baseUrl}}/cv/1/education/1
+Authorization: Bearer {{token}}
+
+###
+
+# Zmień kolejność
+PATCH {{baseUrl}}/cv/1/education/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "order": 2
+}

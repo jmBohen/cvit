@@ -1,0 +1,9 @@
+POST {{baseUrl}}/cv
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Backend Dev @ Allegro",
+  "targetCompany": "Allegro",
+  "jobOfferUrl": "https://allegro.pl/praca/backend-developer"
+}

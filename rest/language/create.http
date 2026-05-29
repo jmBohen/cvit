@@ -1,0 +1,8 @@
+POST {{baseUrl}}/language
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Angielski",
+  "level": "B2"
+}

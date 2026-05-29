@@ -1,0 +1,9 @@
+POST {{baseUrl}}/activity
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Hackathon HackYeah 2024",
+  "description": "Zajęcie 2. miejsca w kategorii FinTech.",
+  "date": "2024-09-28"
+}

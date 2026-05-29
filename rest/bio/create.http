@@ -1,0 +1,7 @@
+POST {{baseUrl}}/bio
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "content": "Jestem programistą backendowym z doświadczeniem w NestJS i PostgreSQL."
+}

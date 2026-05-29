@@ -1,0 +1,8 @@
+POST {{baseUrl}}/interest
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Open Source",
+  "description": "Regularne kontrybucje do projektów open source."
+}

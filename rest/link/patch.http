@@ -1,0 +1,7 @@
+PATCH {{baseUrl}}/link/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "label": "Strona osobista"
+}

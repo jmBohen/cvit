@@ -1,0 +1,31 @@
+# Dodaj język do CV
+POST {{baseUrl}}/cv/1/language
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "languageId": 1
+}
+
+###
+
+# Pobierz języki w CV
+GET {{baseUrl}}/cv/1/language
+Authorization: Bearer {{token}}
+
+###
+
+# Usuń język z CV
+DELETE {{baseUrl}}/cv/1/language/1
+Authorization: Bearer {{token}}
+
+###
+
+# Zmień kolejność
+PATCH {{baseUrl}}/cv/1/language/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "order": 2
+}

@@ -1,0 +1,7 @@
+PATCH {{baseUrl}}/activity/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "description": "Zajęcie 1. miejsca w kategorii FinTech."
+}

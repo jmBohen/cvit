@@ -1,0 +1,31 @@
+# Dodaj doświadczenie do CV
+POST {{baseUrl}}/cv/1/experience
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "experienceId": 1
+}
+
+###
+
+# Pobierz doświadczenia w CV
+GET {{baseUrl}}/cv/1/experience
+Authorization: Bearer {{token}}
+
+###
+
+# Usuń doświadczenie z CV
+DELETE {{baseUrl}}/cv/1/experience/1
+Authorization: Bearer {{token}}
+
+###
+
+# Zmień kolejność
+PATCH {{baseUrl}}/cv/1/experience/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "order": 2
+}

@@ -1,0 +1,7 @@
+PATCH {{baseUrl}}/interest/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "description": "Aktywne kontrybucje do projektów open source na GitHub."
+}

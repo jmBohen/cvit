@@ -1,0 +1,2 @@
+GET {{baseUrl}}/link
+Authorization: Bearer {{token}}

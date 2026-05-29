@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/technology/1
+Authorization: Bearer {{token}}

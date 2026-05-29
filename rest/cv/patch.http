@@ -1,0 +1,8 @@
+PATCH {{baseUrl}}/cv/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Full Stack Dev @ Allegro",
+  "targetCompany": "Allegro"
+}

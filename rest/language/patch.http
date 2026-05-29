@@ -1,0 +1,7 @@
+PATCH {{baseUrl}}/language/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "level": "C1"
+}

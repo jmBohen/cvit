@@ -1,0 +1,7 @@
+PATCH {{baseUrl}}/bio/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "content": "Doświadczony programista backendowy specjalizujący się w NestJS i TypeScript."
+}

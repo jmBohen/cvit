@@ -1,0 +1,12 @@
+POST {{baseUrl}}/education
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "school": "Politechnika Warszawska",
+  "faculty": "Wydział Elektryczny",
+  "degree": "inżynier",
+  "fieldOfStudy": "Informatyka",
+  "startDate": "2020-10-01",
+  "isCurrent": true
+}

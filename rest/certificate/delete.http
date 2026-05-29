@@ -1,0 +1,2 @@
+DELETE {{baseUrl}}/certificate/1
+Authorization: Bearer {{token}}

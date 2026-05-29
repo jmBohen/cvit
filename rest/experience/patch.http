@@ -1,0 +1,9 @@
+PATCH {{baseUrl}}/experience/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "position": "Mid Backend Developer",
+  "isCurrent": false,
+  "endDate": "2025-01-31"
+}
