@@ -6,6 +6,9 @@ export const getDataItems = (resource: string) => apiClient.get(`/${resource}`).
 export const createDataItem = (resource: string, data: unknown) =>
   apiClient.post(`/${resource}`, data).then((r) => r.data);
 
+export const updateDataItem = (resource: string, id: number, data: unknown) =>
+  apiClient.patch(`/${resource}/${id}`, data).then((r) => r.data);
+
 export const deleteDataItem = (resource: string, id: number) =>
   apiClient.delete(`/${resource}/${id}`);
 
