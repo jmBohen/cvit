@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem } from '../../api/dataItems';
+import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
 import type { Education } from '../../types/api';
 
-function AddEducationForm({ onSuccess }: { onSuccess: () => void }) {
+function EducationForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () => void, initialData?: Education | null, onCancelEdit?: () => void }) {
   const [school, setSchool] = useState('');
   const [degree, setDegree] = useState('');
   const [fieldOfStudy, setFieldOfStudy] = useState('');
@@ -12,8 +12,28 @@ function AddEducationForm({ onSuccess }: { onSuccess: () => void }) {
   const [isCurrent, setIsCurrent] = useState(false);
   const [description, setDescription] = useState('');
   
+  useEffect(() => {
+    if (initialData) {
+      setSchool(initialData.school);
+      setDegree(initialData.degree || '');
+      setFieldOfStudy(initialData.fieldOfStudy || '');
+      setStartDate(initialData.startDate);
+      setEndDate(initialData.endDate || '');
+      setIsCurrent(initialData.isCurrent);
+      setDescription(initialData.description || '');
+    } else {
+      setSchool('');
+      setDegree('');
+      setFieldOfStudy('');
+      setStartDate('');
+      setEndDate('');
+      setIsCurrent(false);
+      setDescription('');
+    }
+  }, [initialData]);
+
   const mutation = useMutation({
-    mutationFn: (data: any) => createDataItem('education', data),
+    mutationFn: (data: any) => initialData ? updateDataItem('education', initialData.id, data) : createDataItem('education', data),
     onSuccess: () => {
       setSchool('');
       setDegree('');
@@ -31,7 +51,7 @@ function AddEducationForm({ onSuccess }: { onSuccess: () => void }) {
       e.preventDefault(); 
       mutation.mutate({ school, degree, fieldOfStudy, startDate, endDate: isCurrent ? null : endDate, isCurrent, description }); 
     }} className="mb-6 p-4 border border-dashed border-slate-300 rounded-lg bg-white space-y-4">
-      <h4 className="text-sm font-medium text-slate-900">Dodaj edukację</h4>
+      <h4 className="text-sm font-medium text-slate-900">{initialData ? 'Edytuj edukację' : 'Dodaj edukację'}</h4>
       
       <div className="grid grid-cols-1 gap-4">
         <div>
@@ -71,9 +91,14 @@ function AddEducationForm({ onSuccess }: { onSuccess: () => void }) {
         <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"></textarea>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        {initialData && (
+          <button type="button" onClick={onCancelEdit} className="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Anuluj
+          </button>
+        )}
         <button type="submit" disabled={mutation.isPending} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
-          Dodaj edukację
+          {initialData ? 'Zapisz zmiany' : 'Dodaj edukację'}
         </button>
       </div>
     </form>
@@ -82,6 +107,7 @@ function AddEducationForm({ onSuccess }: { onSuccess: () => void }) {
 
 export default function EducationTab({ cvId }: { cvId: number }) {
   const queryClient = useQueryClient();
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const { data: allEducations } = useQuery<Education[]>({
     queryKey: ['educations'],
@@ -95,7 +121,7 @@ export default function EducationTab({ cvId }: { cvId: number }) {
 
   const cvEduIds = new Set(cvEducations?.map((e) => e.education.id));
 
-  const mutation = useMutation({
+  const toggleMutation = useMutation({
     mutationFn: ({ eduId, inCv }: { eduId: number; inCv: boolean }) =>
       inCv
         ? removeItemFromCv(cvId, 'education', eduId)
@@ -103,40 +129,64 @@ export default function EducationTab({ cvId }: { cvId: number }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cv-educations', cvId] }),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteDataItem('education', id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['educations'] });
+      queryClient.invalidateQueries({ queryKey: ['cv-educations', cvId] });
+    },
+  });
+
+  const editingItem = allEducations?.find(e => e.id === editingId);
+
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex-1 bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
         <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Moja edukacja</h3>
-        <AddEducationForm onSuccess={() => queryClient.invalidateQueries({ queryKey: ['educations'] })} />
+        <EducationForm 
+          initialData={editingItem}
+          onCancelEdit={() => setEditingId(null)}
+          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['educations'] }); queryClient.invalidateQueries({ queryKey: ['cv-educations', cvId] }); }} 
+        />
         
         <div className="space-y-3">
           {allEducations?.length === 0 && <p className="text-sm text-slate-500 italic">Brak wpisów o edukacji.</p>}
           {allEducations?.map((edu) => {
             const inCv = cvEduIds.has(edu.id);
             return (
-              <label key={edu.id} className={`flex items-start p-4 rounded-md border cursor-pointer transition-colors ${inCv ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:bg-slate-50'}`}>
-                <div className="flex items-center h-5 mt-1">
-                  <input
-                    type="checkbox"
-                    checked={inCv}
-                    onChange={() => mutation.mutate({ eduId: edu.id, inCv })}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
-                  />
-                </div>
-                <div className="ml-3 flex-1">
-                  <span className={`block text-base font-semibold ${inCv ? 'text-blue-900' : 'text-slate-900'}`}>
-                    {edu.school}
-                  </span>
-                  {(edu.fieldOfStudy || edu.degree) && (
-                    <span className={`block text-sm ${inCv ? 'text-blue-700' : 'text-slate-600'} font-medium`}>
-                      {edu.fieldOfStudy} {edu.degree && `(${edu.degree})`}
+              <div key={edu.id} className={`flex items-start p-4 rounded-md border transition-colors ${inCv ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:bg-slate-50'}`}>
+                <label className="flex items-start cursor-pointer flex-1">
+                  <div className="flex items-center h-5 mt-1">
+                    <input
+                      type="checkbox"
+                      checked={inCv}
+                      onChange={() => toggleMutation.mutate({ eduId: edu.id, inCv })}
+                      className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    />
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <span className={`block text-base font-semibold ${inCv ? 'text-blue-900' : 'text-slate-900'}`}>
+                      {edu.school}
                     </span>
-                  )}
-                  <span className="block text-xs text-slate-500 mt-1">
-                    {edu.startDate} - {edu.isCurrent ? 'Obecnie' : edu.endDate}
-                  </span>
+                    {(edu.fieldOfStudy || edu.degree) && (
+                      <span className={`block text-sm ${inCv ? 'text-blue-700' : 'text-slate-600'} font-medium`}>
+                        {edu.fieldOfStudy} {edu.degree && `(${edu.degree})`}
+                      </span>
+                    )}
+                    <span className="block text-xs text-slate-500 mt-1">
+                      {edu.startDate} - {edu.isCurrent ? 'Obecnie' : edu.endDate}
+                    </span>
+                  </div>
+                </label>
+                <div className="flex flex-col space-y-2 ml-4">
+                  <button onClick={() => setEditingId(edu.id)} className="text-slate-400 hover:text-blue-600 p-1" title="Edytuj">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  </button>
+                  <button onClick={() => window.confirm('Usunąć ten element?') && deleteMutation.mutate(edu.id)} className="text-slate-400 hover:text-red-600 p-1" title="Usuń">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                  </button>
                 </div>
-              </label>
+              </div>
             );
           })}
         </div>

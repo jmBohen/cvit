@@ -1,14 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem } from '../../api/dataItems';
+import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
 import type { Language } from '../../types/api';
 
-function AddLanguageForm({ onSuccess }: { onSuccess: () => void }) {
+function LanguageForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () => void, initialData?: Language | null, onCancelEdit?: () => void }) {
   const [name, setName] = useState('');
   const [level, setLevel] = useState('B2');
   
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name);
+      setLevel(initialData.level);
+    } else {
+      setName('');
+      setLevel('B2');
+    }
+  }, [initialData]);
+
   const mutation = useMutation({
-    mutationFn: (data: any) => createDataItem('language', data),
+    mutationFn: (data: any) => initialData ? updateDataItem('language', initialData.id, data) : createDataItem('language', data),
     onSuccess: () => {
       setName('');
       setLevel('B2');
@@ -21,7 +31,7 @@ function AddLanguageForm({ onSuccess }: { onSuccess: () => void }) {
       e.preventDefault(); 
       mutation.mutate({ name, level }); 
     }} className="mb-6 p-4 border border-dashed border-slate-300 rounded-lg bg-white">
-      <h4 className="text-sm font-medium text-slate-900 mb-3">Dodaj język</h4>
+      <h4 className="text-sm font-medium text-slate-900 mb-3">{initialData ? 'Edytuj język' : 'Dodaj język'}</h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <input 
           type="text" 
@@ -45,9 +55,14 @@ function AddLanguageForm({ onSuccess }: { onSuccess: () => void }) {
           <option value="native">Native (Ojczysty)</option>
         </select>
       </div>
-      <div className="mt-3 flex justify-end">
+      <div className="mt-3 flex justify-end gap-2">
+        {initialData && (
+          <button type="button" onClick={onCancelEdit} className="inline-flex items-center px-4 py-2 border border-slate-300 text-sm font-medium rounded-md shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Anuluj
+          </button>
+        )}
         <button type="submit" disabled={mutation.isPending} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900">
-          Dodaj język
+          {initialData ? 'Zapisz zmiany' : 'Dodaj język'}
         </button>
       </div>
     </form>
@@ -56,6 +71,7 @@ function AddLanguageForm({ onSuccess }: { onSuccess: () => void }) {
 
 export default function LanguagesTab({ cvId }: { cvId: number }) {
   const queryClient = useQueryClient();
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const { data: allLanguages } = useQuery<Language[]>({
     queryKey: ['languages'],
@@ -69,7 +85,7 @@ export default function LanguagesTab({ cvId }: { cvId: number }) {
 
   const cvLangIds = new Set(cvLanguages?.map((l) => l.language.id));
 
-  const mutation = useMutation({
+  const toggleMutation = useMutation({
     mutationFn: ({ langId, inCv }: { langId: number; inCv: boolean }) =>
       inCv
         ? removeItemFromCv(cvId, 'language', langId)
@@ -77,30 +93,55 @@ export default function LanguagesTab({ cvId }: { cvId: number }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cv-languages', cvId] }),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => deleteDataItem('language', id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['languages'] });
+      queryClient.invalidateQueries({ queryKey: ['cv-languages', cvId] });
+    },
+  });
+
+  const editingItem = allLanguages?.find(l => l.id === editingId);
+
   return (
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex-1 bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
         <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Moje języki</h3>
-        <AddLanguageForm onSuccess={() => queryClient.invalidateQueries({ queryKey: ['languages'] })} />
+        <LanguageForm 
+          initialData={editingItem}
+          onCancelEdit={() => setEditingId(null)}
+          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['languages'] }); queryClient.invalidateQueries({ queryKey: ['cv-languages', cvId] }); }} 
+        />
+        
         <div className="space-y-2">
           {allLanguages?.length === 0 && <p className="text-sm text-slate-500 italic">Brak dodanych języków.</p>}
           {allLanguages?.map((lang) => {
             const inCv = cvLangIds.has(lang.id);
             return (
-              <label key={lang.id} className={`flex items-center p-3 rounded-md border cursor-pointer transition-colors ${inCv ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:bg-slate-50'}`}>
-                <input
-                  type="checkbox"
-                  checked={inCv}
-                  onChange={() => mutation.mutate({ langId: lang.id, inCv })}
-                  className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
-                />
-                <span className={`flex-1 text-sm font-medium ${inCv ? 'text-blue-900' : 'text-slate-700'}`}>
-                  {lang.name}
-                </span>
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${inCv ? 'bg-blue-200 text-blue-800' : 'bg-slate-100 text-slate-600'}`}>
-                  {lang.level}
-                </span>
-              </label>
+              <div key={lang.id} className={`flex items-center p-3 rounded-md border transition-colors ${inCv ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:bg-slate-50'}`}>
+                <label className="flex items-center cursor-pointer flex-1">
+                  <input
+                    type="checkbox"
+                    checked={inCv}
+                    onChange={() => toggleMutation.mutate({ langId: lang.id, inCv })}
+                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
+                  />
+                  <span className={`flex-1 text-sm font-medium ${inCv ? 'text-blue-900' : 'text-slate-700'}`}>
+                    {lang.name}
+                  </span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${inCv ? 'bg-blue-200 text-blue-800' : 'bg-slate-100 text-slate-600'}`}>
+                    {lang.level}
+                  </span>
+                </label>
+                <div className="flex items-center space-x-2 ml-4">
+                  <button onClick={() => setEditingId(lang.id)} className="text-slate-400 hover:text-blue-600 p-1" title="Edytuj">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  </button>
+                  <button onClick={() => window.confirm('Usunąć ten element?') && deleteMutation.mutate(lang.id)} className="text-slate-400 hover:text-red-600 p-1" title="Usuń">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                  </button>
+                </div>
+              </div>
             );
           })}
         </div>
