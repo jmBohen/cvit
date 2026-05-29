@@ -42,32 +42,49 @@ export default function DashboardPage() {
     }
   };
 
-  if (isLoading) return <div>Ładowanie...</div>;
-  if (error) return <div style={{ color: 'red' }}>Wystąpił błąd podczas pobierania CV</div>;
+  if (isLoading) return <div className="flex justify-center items-center py-20 text-slate-500">Ładowanie Twoich CV...</div>;
+  if (error) return <div className="bg-red-50 text-red-600 p-4 rounded-md shadow-sm">Wystąpił błąd podczas pobierania CV.</div>;
 
   return (
-    <div>
-      <h2>Dashboard - Twoje CV</h2>
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900">Dashboard</h2>
+          <p className="text-slate-500 mt-1">Zarządzaj swoimi wersjami CV</p>
+        </div>
+      </div>
       
-      <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ccc', borderRadius: '5px' }}>
-        <h3>Utwórz nowe CV</h3>
-        <form onSubmit={handleCreate}>
-          <input
-            type="text"
-            placeholder="Nazwa CV (np. Backend Dev)"
-            value={newCvName}
-            onChange={(e) => setNewCvName(e.target.value)}
-            style={{ marginRight: '10px', padding: '5px' }}
-            required
-          />
-          <input
-            type="text"
-            placeholder="Firma docelowa (opcjonalnie)"
-            value={targetCompany}
-            onChange={(e) => setTargetCompany(e.target.value)}
-            style={{ marginRight: '10px', padding: '5px' }}
-          />
-          <button type="submit" disabled={createMutation.isPending}>
+      <div className="bg-white shadow-sm ring-1 ring-slate-200 rounded-xl p-6">
+        <h3 className="text-lg font-medium text-slate-900 mb-4">Utwórz nowe CV</h3>
+        <form onSubmit={handleCreate} className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1">
+            <label htmlFor="cvName" className="sr-only">Nazwa CV</label>
+            <input
+              id="cvName"
+              type="text"
+              placeholder="Nazwa CV (np. Backend Dev)"
+              value={newCvName}
+              onChange={(e) => setNewCvName(e.target.value)}
+              className="block w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              required
+            />
+          </div>
+          <div className="flex-1">
+            <label htmlFor="targetCompany" className="sr-only">Firma docelowa</label>
+            <input
+              id="targetCompany"
+              type="text"
+              placeholder="Firma docelowa (opcjonalnie)"
+              value={targetCompany}
+              onChange={(e) => setTargetCompany(e.target.value)}
+              className="block w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <button 
+            type="submit" 
+            disabled={createMutation.isPending}
+            className="inline-flex justify-center items-center px-6 py-2 border border-transparent font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 whitespace-nowrap"
+          >
             {createMutation.isPending ? 'Tworzenie...' : 'Utwórz CV'}
           </button>
         </form>
@@ -75,17 +92,44 @@ export default function DashboardPage() {
 
       <div>
         {cvs?.length === 0 ? (
-          <p>Nie masz jeszcze żadnego CV. Utwórz pierwsze!</p>
+          <div className="text-center bg-white border-2 border-dashed border-slate-300 rounded-xl p-12">
+            <svg className="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h3 className="mt-2 text-sm font-medium text-slate-900">Brak CV</h3>
+            <p className="mt-1 text-sm text-slate-500">Nie masz jeszcze żadnego CV. Utwórz pierwsze korzystając z formularza powyżej.</p>
+          </div>
         ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {cvs?.map((cv) => (
-              <div key={cv.id} style={{ border: '1px solid #eee', padding: '15px', borderRadius: '5px', width: '300px' }}>
-                <h4>{cv.name}</h4>
-                {cv.targetCompany && <p>Firma: {cv.targetCompany}</p>}
-                <p>Data: {new Date(cv.createdAt).toLocaleDateString()}</p>
-                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                  <button onClick={() => navigate(`/cv/${cv.id}`)}>Edytuj</button>
-                  <button onClick={() => handleDelete(cv.id)} style={{ color: 'red' }}>Usuń</button>
+              <div key={cv.id} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+                <div className="p-6 flex-1">
+                  <h4 className="text-lg font-semibold text-slate-900 mb-1">{cv.name}</h4>
+                  {cv.targetCompany ? (
+                    <p className="text-sm text-slate-600 mb-3 flex items-center">
+                      <svg className="flex-shrink-0 mr-1.5 h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                      {cv.targetCompany}
+                    </p>
+                  ) : (
+                    <div className="h-4 mb-3"></div> // Spacer for alignment
+                  )}
+                  <p className="text-xs text-slate-500">
+                    Utworzono: {new Date(cv.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 flex justify-between">
+                  <button 
+                    onClick={() => navigate(`/cv/${cv.id}`)}
+                    className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    Edytuj CV
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(cv.id)} 
+                    className="text-sm font-medium text-red-600 hover:text-red-800 transition-colors"
+                  >
+                    Usuń
+                  </button>
                 </div>
               </div>
             ))}

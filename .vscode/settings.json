@@ -1,0 +1,8 @@
+{
+  "rest-client.environmentVariables": {
+    "local": {
+      "baseUrl": "http://localhost:3000",
+      "token": "PASTE_TOKEN_HERE"
+    }
+  }
+}
