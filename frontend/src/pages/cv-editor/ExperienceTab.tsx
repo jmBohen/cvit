@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
 import type { Experience } from '../../types/api';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function ExperienceForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () => void, initialData?: Experience | null, onCancelEdit?: () => void }) {
   const [company, setCompany] = useState('');
@@ -66,12 +68,29 @@ function ExperienceForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: (
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs text-slate-500 mb-1">Data od</label>
-          <input type="month" value={startDate} onChange={e => setStartDate(e.target.value)} required className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" />
+          <label className="block text-xs text-slate-500 mb-1">Data od (MM/YYYY)</label>
+          <DatePicker
+            selected={startDate ? new Date(startDate) : null}
+            onChange={(date: Date | null) => setStartDate(date ? date.toISOString().substring(0, 7) : '')}
+            dateFormat="MM/yyyy"
+            showMonthYearPicker
+            placeholderText="Wybierz z kalendarza lub wpisz"
+            className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+            required
+          />
         </div>
         <div>
-          <label className="block text-xs text-slate-500 mb-1">Data do</label>
-          <input type="month" value={endDate} onChange={e => setEndDate(e.target.value)} disabled={isCurrent} required={!isCurrent} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm disabled:bg-slate-100" />
+          <label className="block text-xs text-slate-500 mb-1">Data do (MM/YYYY)</label>
+          <DatePicker
+            selected={endDate ? new Date(endDate) : null}
+            onChange={(date: Date | null) => setEndDate(date ? date.toISOString().substring(0, 7) : '')}
+            dateFormat="MM/yyyy"
+            showMonthYearPicker
+            placeholderText="Wybierz z kalendarza lub wpisz"
+            disabled={isCurrent}
+            className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm disabled:bg-slate-100"
+            required={!isCurrent}
+          />
           <div className="mt-2 flex items-center">
             <input id="isCurrent" type="checkbox" checked={isCurrent} onChange={e => setIsCurrent(e.target.checked)} className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
             <label htmlFor="isCurrent" className="ml-2 block text-sm text-slate-700">Obecnie pracuję</label>
