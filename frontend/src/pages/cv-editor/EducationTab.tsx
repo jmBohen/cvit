@@ -17,8 +17,8 @@ function EducationForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: ()
       setSchool(initialData.school);
       setDegree(initialData.degree || '');
       setFieldOfStudy(initialData.fieldOfStudy || '');
-      setStartDate(initialData.startDate);
-      setEndDate(initialData.endDate || '');
+      setStartDate(initialData.startDate ? initialData.startDate.substring(0, 7) : '');
+      setEndDate(initialData.endDate ? initialData.endDate.substring(0, 7) : '');
       setIsCurrent(initialData.isCurrent);
       setDescription(initialData.description || '');
     } else {

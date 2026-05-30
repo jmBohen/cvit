@@ -16,8 +16,8 @@ function ExperienceForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: (
     if (initialData) {
       setCompany(initialData.company);
       setPosition(initialData.position);
-      setStartDate(initialData.startDate);
-      setEndDate(initialData.endDate || '');
+      setStartDate(initialData.startDate ? initialData.startDate.substring(0, 7) : '');
+      setEndDate(initialData.endDate ? initialData.endDate.substring(0, 7) : '');
       setIsCurrent(initialData.isCurrent);
       setDescription(initialData.description || '');
       setCity(initialData.city || '');

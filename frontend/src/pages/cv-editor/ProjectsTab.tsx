@@ -19,8 +19,8 @@ function ProjectForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () =
       setTechStack(initialData.techStack || '');
       setGithubUrl(initialData.githubUrl || '');
       setLiveUrl(initialData.liveUrl || '');
-      setStartDate(initialData.startDate || '');
-      setEndDate(initialData.endDate || '');
+      setStartDate(initialData.startDate ? initialData.startDate.substring(0, 7) : '');
+      setEndDate(initialData.endDate ? initialData.endDate.substring(0, 7) : '');
     } else {
       setName('');
       setDescription('');
