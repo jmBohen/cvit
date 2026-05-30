@@ -17,4 +17,19 @@ export class CvSetting {
 
   @Column({ nullable: true })
   accentColor: string;
+
+  @Column({ type: 'simple-array', nullable: true })
+  sectionOrder: string[];
+
+  @Column({ default: true })
+  showPhoto: boolean;
+
+  @Column({ default: true })
+  showEmail: boolean;
+
+  @Column({ default: true })
+  showPhone: boolean;
+
+  @Column({ default: true })
+  showDob: boolean;
 }

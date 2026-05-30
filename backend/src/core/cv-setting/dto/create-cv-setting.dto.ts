@@ -1,4 +1,4 @@
-import { IsHexColor, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsHexColor, IsOptional, IsString } from 'class-validator';
 
 export class CreateCvSettingDto {
   @IsString()
@@ -12,4 +12,25 @@ export class CreateCvSettingDto {
   @IsHexColor()
   @IsOptional()
   accentColor?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  sectionOrder?: string[];
+
+  @IsBoolean()
+  @IsOptional()
+  showPhoto?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  showEmail?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  showPhone?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  showDob?: boolean;
 }

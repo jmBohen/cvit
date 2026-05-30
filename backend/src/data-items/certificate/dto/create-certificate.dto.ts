@@ -5,6 +5,7 @@ import {
   IsString,
   IsUrl,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateCertificateDto {
   @IsString()
@@ -16,10 +17,12 @@ export class CreateCertificateDto {
   issuer: string;
 
   @IsDateString()
+  @Transform(({ value }) => (value && value.length === 7 ? `${value}-01` : value))
   issueDate: string;
 
   @IsDateString()
   @IsOptional()
+  @Transform(({ value }) => (value && value.length === 7 ? `${value}-01` : value))
   expiryDate?: string;
 
   @IsUrl()

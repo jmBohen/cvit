@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateExperienceDto {
   @IsString()
@@ -16,10 +17,12 @@ export class CreateExperienceDto {
   position: string;
 
   @IsDateString()
+  @Transform(({ value }) => (value && value.length === 7 ? `${value}-01` : value))
   startDate: string;
 
   @IsDateString()
   @IsOptional()
+  @Transform(({ value }) => (value && value.length === 7 ? `${value}-01` : value))
   endDate?: string;
 
   @IsBoolean()

@@ -5,6 +5,7 @@ import {
   IsString,
   IsUrl,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateProjectDto {
   @IsString()
@@ -29,9 +30,11 @@ export class CreateProjectDto {
 
   @IsDateString()
   @IsOptional()
+  @Transform(({ value }) => (value && value.length === 7 ? `${value}-01` : value))
   startDate?: string;
 
   @IsDateString()
   @IsOptional()
+  @Transform(({ value }) => (value && value.length === 7 ? `${value}-01` : value))
   endDate?: string;
 }

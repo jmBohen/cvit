@@ -39,6 +39,9 @@ export class CvService {
     const cv = await this.cvRepository.findOne({
       where: { id, user: { id: userId } },
       relations: {
+        user: {
+          profile: true,
+        },
         settings: true,
         bioItems: { bio: true },
         experienceItems: { experience: true },

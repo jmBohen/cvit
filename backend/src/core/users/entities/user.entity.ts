@@ -3,8 +3,11 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  OneToOne,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Profile } from '../../profile/entities/profile.entity';
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -25,6 +28,9 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToOne(() => Profile, profile => profile.user)
+  profile: Profile;
 
   @CreateDateColumn()
   createdAt: Date;

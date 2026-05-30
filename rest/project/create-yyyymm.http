@@ -1,0 +1,13 @@
+POST {{baseUrl}}/project
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Konwerter plików PDF",
+  "description": "Ciężka robota dużo pracy serio fajnie\n",
+  "techStack": "Python",
+  "githubUrl": "https://github.com/",
+  "liveUrl": "https://github.com/",
+  "startDate": "2026-05",
+  "endDate": "2026-05"
+}

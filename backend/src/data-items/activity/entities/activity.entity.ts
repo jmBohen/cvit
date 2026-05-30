@@ -28,6 +28,9 @@ export class Activity {
   @Column({ type: 'date', nullable: true })
   endDate: Date;
 
+  @Column({ default: false })
+  isCurrent: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 
