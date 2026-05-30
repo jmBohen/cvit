@@ -18,10 +18,16 @@ export default function AppLayout() {
             <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigate('/')}>
               <h1 className="text-2xl font-bold text-blue-600 tracking-tight">CV<span className="text-slate-800">IT</span></h1>
             </div>
-            <div>
+            <div className="flex items-center space-x-4">
+              <button 
+                onClick={() => navigate('/profile')}
+                className="text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
+              >
+                Mój Profil
+              </button>
               <button 
                 onClick={handleLogout}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-slate-500 bg-white hover:bg-slate-50 hover:text-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm border-gray-300"
+                className="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-500 bg-white hover:bg-slate-50 hover:text-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 border-gray-300"
               >
                 Wyloguj się
               </button>

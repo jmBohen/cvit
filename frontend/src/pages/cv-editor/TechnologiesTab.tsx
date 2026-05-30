@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
+import { useOptimisticToggle } from '../../hooks/useOptimisticToggle';
+import { getDataItems, getCvItems, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
 import type { Technology } from '../../types/api';
 
 function TechnologyForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () => void, initialData?: Technology | null, onCancelEdit?: () => void }) {
@@ -89,13 +90,7 @@ export default function TechnologiesTab({ cvId }: { cvId: number }) {
 
   const cvTechIds = new Set(cvTechnologies?.map((t) => t.technology.id));
 
-  const toggleMutation = useMutation({
-    mutationFn: ({ techId, inCv }: { techId: number; inCv: boolean }) =>
-      inCv
-        ? removeItemFromCv(cvId, 'technology', techId)
-        : addItemToCv(cvId, 'technology', techId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cv-technologies', cvId] }),
-  });
+  const toggleMutation = useOptimisticToggle(cvId, 'technology', 'technologies', 'cv-technologies');
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteDataItem('technology', id),
@@ -127,7 +122,7 @@ export default function TechnologiesTab({ cvId }: { cvId: number }) {
                     <input
                       type="checkbox"
                       checked={inCv}
-                      onChange={() => toggleMutation.mutate({ techId: tech.id, inCv })}
+                      onChange={() => toggleMutation.mutate({ id: tech.id, inCv })}
                       className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                     />
                   </div>
@@ -168,7 +163,7 @@ export default function TechnologiesTab({ cvId }: { cvId: number }) {
                 </div>
               </div>
               <button 
-                onClick={() => toggleMutation.mutate({ techId: item.technology.id, inCv: true })}
+                onClick={() => toggleMutation.mutate({ id: item.tech.id, inCv: true })}
                 className="text-slate-300 hover:text-red-500 transition-colors p-1"
                 title="Usuń z CV"
               >

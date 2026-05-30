@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
+import { useOptimisticToggle } from '../../hooks/useOptimisticToggle';
+import { getDataItems, getCvItems, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
 import type { Language } from '../../types/api';
 
 function LanguageForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () => void, initialData?: Language | null, onCancelEdit?: () => void }) {
@@ -85,13 +86,7 @@ export default function LanguagesTab({ cvId }: { cvId: number }) {
 
   const cvLangIds = new Set(cvLanguages?.map((l) => l.language.id));
 
-  const toggleMutation = useMutation({
-    mutationFn: ({ langId, inCv }: { langId: number; inCv: boolean }) =>
-      inCv
-        ? removeItemFromCv(cvId, 'language', langId)
-        : addItemToCv(cvId, 'language', langId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cv-languages', cvId] }),
-  });
+  const toggleMutation = useOptimisticToggle(cvId, 'language', 'languages', 'cv-languages');
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteDataItem('language', id),
@@ -123,7 +118,7 @@ export default function LanguagesTab({ cvId }: { cvId: number }) {
                   <input
                     type="checkbox"
                     checked={inCv}
-                    onChange={() => toggleMutation.mutate({ langId: lang.id, inCv })}
+                    onChange={() => toggleMutation.mutate({ id: lang.id, inCv })}
                     className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded mr-3"
                   />
                   <span className={`flex-1 text-sm font-medium ${inCv ? 'text-blue-900' : 'text-slate-700'}`}>
@@ -162,7 +157,7 @@ export default function LanguagesTab({ cvId }: { cvId: number }) {
               <div className="flex items-center">
                 <span className="text-sm font-bold text-slate-700 mr-3">{item.language.level}</span>
                 <button 
-                  onClick={() => toggleMutation.mutate({ langId: item.language.id, inCv: true })}
+                  onClick={() => toggleMutation.mutate({ id: item.lang.id, inCv: true })}
                   className="text-slate-300 hover:text-red-500 transition-colors p-1"
                   title="Usuń z CV"
                 >

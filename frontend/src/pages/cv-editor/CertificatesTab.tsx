@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
+import { useOptimisticToggle } from '../../hooks/useOptimisticToggle';
+import { getDataItems, getCvItems, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
 import type { Certificate } from '../../types/api';
 
 function CertificateForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () => void, initialData?: Certificate | null, onCancelEdit?: () => void }) {
@@ -37,7 +38,13 @@ function CertificateForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: 
   return (
     <form onSubmit={(e) => { 
       e.preventDefault(); 
-      mutation.mutate({ name, issuer, issueDate, credentialUrl }); 
+      const data = { 
+        name, 
+        issuer, 
+        issueDate, 
+        credentialUrl: credentialUrl || undefined 
+      };
+      mutation.mutate(data); 
     }} className="mb-6 p-4 border border-dashed border-slate-300 rounded-lg bg-white space-y-4">
       <h4 className="text-sm font-medium text-slate-900">{initialData ? 'Edytuj certyfikat' : 'Dodaj certyfikat'}</h4>
       
@@ -92,13 +99,7 @@ export default function CertificatesTab({ cvId }: { cvId: number }) {
 
   const cvCertIds = new Set(cvCertificates?.map((c) => c.certificate.id));
 
-  const toggleMutation = useMutation({
-    mutationFn: ({ certId, inCv }: { certId: number; inCv: boolean }) =>
-      inCv
-        ? removeItemFromCv(cvId, 'certificate', certId)
-        : addItemToCv(cvId, 'certificate', certId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cv-certificates', cvId] }),
-  });
+  const toggleMutation = useOptimisticToggle(cvId, 'certificate', 'certificates', 'cv-certificates');
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteDataItem('certificate', id),
@@ -131,7 +132,7 @@ export default function CertificatesTab({ cvId }: { cvId: number }) {
                     <input
                       type="checkbox"
                       checked={inCv}
-                      onChange={() => toggleMutation.mutate({ certId: cert.id, inCv })}
+                      onChange={() => toggleMutation.mutate({ id: cert.id, inCv })}
                       className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                     />
                   </div>
@@ -177,7 +178,7 @@ export default function CertificatesTab({ cvId }: { cvId: number }) {
                 </div>
               </div>
               <button 
-                onClick={() => toggleMutation.mutate({ certId: item.certificate.id, inCv: true })}
+                onClick={() => toggleMutation.mutate({ id: item.cert.id, inCv: true })}
                 className="text-slate-300 hover:text-red-500 transition-colors p-1"
                 title="Usuń z CV"
               >

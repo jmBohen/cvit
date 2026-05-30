@@ -2,18 +2,23 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getCvFull } from '../api/cv';
+import BioTab from './cv-editor/BioTab';
 import TechnologiesTab from './cv-editor/TechnologiesTab';
 import ExperienceTab from './cv-editor/ExperienceTab';
 import EducationTab from './cv-editor/EducationTab';
 import ProjectsTab from './cv-editor/ProjectsTab';
 import CertificatesTab from './cv-editor/CertificatesTab';
 import LanguagesTab from './cv-editor/LanguagesTab';
+import LinksTab from './cv-editor/LinksTab';
+import InterestsTab from './cv-editor/InterestsTab';
+import ActivitiesTab from './cv-editor/ActivitiesTab';
+import SettingsTab from './cv-editor/SettingsTab';
 
 export default function CvEditorPage() {
   const { id } = useParams<{ id: string }>();
   const cvId = Number(id);
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('technologies');
+  const [activeTab, setActiveTab] = useState('bio');
 
   const { data: cv, isLoading } = useQuery({
     queryKey: ['cv', cvId],
@@ -24,12 +29,17 @@ export default function CvEditorPage() {
   if (!cv) return <div className="text-center py-12 text-slate-500">Nie znaleziono CV</div>;
 
   const tabs = [
-    { id: 'technologies', label: 'Technologie' },
+    { id: 'bio', label: 'Bio' },
     { id: 'experience', label: 'Doświadczenie' },
     { id: 'education', label: 'Edukacja' },
     { id: 'projects', label: 'Projekty' },
-    { id: 'certificates', label: 'Certyfikaty' },
+    { id: 'technologies', label: 'Technologie' },
     { id: 'languages', label: 'Języki' },
+    { id: 'certificates', label: 'Certyfikaty' },
+    { id: 'links', label: 'Linki' },
+    { id: 'interests', label: 'Zainteresowania' },
+    { id: 'activities', label: 'Aktywności' },
+    { id: 'settings', label: 'Ustawienia' },
   ];
 
   return (
@@ -78,12 +88,17 @@ export default function CvEditorPage() {
         </div>
 
         <div className="p-6 bg-slate-50/50">
-          {activeTab === 'technologies' && <TechnologiesTab cvId={cvId} />}
-          {activeTab === 'experience' && <ExperienceTab cvId={cvId} />}
-          {activeTab === 'education' && <EducationTab cvId={cvId} />}
-          {activeTab === 'projects' && <ProjectsTab cvId={cvId} />}
-          {activeTab === 'certificates' && <CertificatesTab cvId={cvId} />}
-          {activeTab === 'languages' && <LanguagesTab cvId={cvId} />}
+          <div className={activeTab === 'bio' ? 'block' : 'hidden'}><BioTab cvId={cvId} /></div>
+          <div className={activeTab === 'experience' ? 'block' : 'hidden'}><ExperienceTab cvId={cvId} /></div>
+          <div className={activeTab === 'education' ? 'block' : 'hidden'}><EducationTab cvId={cvId} /></div>
+          <div className={activeTab === 'projects' ? 'block' : 'hidden'}><ProjectsTab cvId={cvId} /></div>
+          <div className={activeTab === 'technologies' ? 'block' : 'hidden'}><TechnologiesTab cvId={cvId} /></div>
+          <div className={activeTab === 'languages' ? 'block' : 'hidden'}><LanguagesTab cvId={cvId} /></div>
+          <div className={activeTab === 'certificates' ? 'block' : 'hidden'}><CertificatesTab cvId={cvId} /></div>
+          <div className={activeTab === 'links' ? 'block' : 'hidden'}><LinksTab cvId={cvId} /></div>
+          <div className={activeTab === 'interests' ? 'block' : 'hidden'}><InterestsTab cvId={cvId} /></div>
+          <div className={activeTab === 'activities' ? 'block' : 'hidden'}><ActivitiesTab cvId={cvId} /></div>
+          <div className={activeTab === 'settings' ? 'block' : 'hidden'}><SettingsTab cvId={cvId} /></div>
         </div>
       </div>
     </div>

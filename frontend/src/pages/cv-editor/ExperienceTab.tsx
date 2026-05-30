@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
+import { useOptimisticToggle } from '../../hooks/useOptimisticToggle';
+import { getDataItems, getCvItems, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
 import type { Experience } from '../../types/api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -51,7 +52,16 @@ function ExperienceForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: (
   return (
     <form onSubmit={(e) => { 
       e.preventDefault(); 
-      mutation.mutate({ company, position, startDate, endDate: isCurrent ? null : endDate, isCurrent, description, city }); 
+      const data = { 
+        company, 
+        position, 
+        startDate, 
+        endDate: isCurrent ? undefined : (endDate || undefined), 
+        isCurrent, 
+        description: description || undefined, 
+        city: city || undefined 
+      };
+      mutation.mutate(data); 
     }} className="mb-6 p-4 border border-dashed border-slate-300 rounded-lg bg-white space-y-4">
       <h4 className="text-sm font-medium text-slate-900">{initialData ? 'Edytuj doświadczenie' : 'Dodaj nowe doświadczenie'}</h4>
       
@@ -68,25 +78,25 @@ function ExperienceForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: (
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs text-slate-500 mb-1">Data od (MM/YYYY)</label>
+          <label className="block text-xs text-slate-500 mb-1">Data od: </label>
           <DatePicker
             selected={startDate ? new Date(startDate) : null}
             onChange={(date: Date | null) => setStartDate(date ? date.toISOString().substring(0, 7) : '')}
             dateFormat="MM/yyyy"
             showMonthYearPicker
-            placeholderText="Wybierz z kalendarza lub wpisz"
+            placeholderText="mm/yyyy"
             className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
             required
           />
         </div>
         <div>
-          <label className="block text-xs text-slate-500 mb-1">Data do (MM/YYYY)</label>
+          <label className="block text-xs text-slate-500 mb-1">Data do: </label>
           <DatePicker
             selected={endDate ? new Date(endDate) : null}
             onChange={(date: Date | null) => setEndDate(date ? date.toISOString().substring(0, 7) : '')}
             dateFormat="MM/yyyy"
             showMonthYearPicker
-            placeholderText="Wybierz z kalendarza lub wpisz"
+            placeholderText="mm/yyyy"
             disabled={isCurrent}
             className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm disabled:bg-slate-100"
             required={!isCurrent}
@@ -138,13 +148,7 @@ export default function ExperienceTab({ cvId }: { cvId: number }) {
 
   const cvExpIds = new Set(cvExperiences?.map((e) => e.experience.id));
 
-  const toggleMutation = useMutation({
-    mutationFn: ({ expId, inCv }: { expId: number; inCv: boolean }) =>
-      inCv
-        ? removeItemFromCv(cvId, 'experience', expId)
-        : addItemToCv(cvId, 'experience', expId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cv-experiences', cvId] }),
-  });
+  const toggleMutation = useOptimisticToggle(cvId, 'experience', 'experiences', 'cv-experiences');
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => deleteDataItem('experience', id),
@@ -177,7 +181,7 @@ export default function ExperienceTab({ cvId }: { cvId: number }) {
                     <input
                       type="checkbox"
                       checked={inCv}
-                      onChange={() => toggleMutation.mutate({ expId: exp.id, inCv })}
+                      onChange={() => toggleMutation.mutate({ id: exp.id, inCv })}
                       className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
                     />
                   </div>
@@ -220,7 +224,7 @@ export default function ExperienceTab({ cvId }: { cvId: number }) {
                 <p className="text-xs text-slate-500 mt-0.5">{item.experience.startDate} - {item.experience.isCurrent ? 'Obecnie' : item.experience.endDate}</p>
               </div>
               <button 
-                onClick={() => toggleMutation.mutate({ expId: item.experience.id, inCv: true })}
+                onClick={() => toggleMutation.mutate({ id: item.exp.id, inCv: true })}
                 className="text-slate-300 hover:text-red-500 transition-colors p-1"
                 title="Usuń z CV"
               >
