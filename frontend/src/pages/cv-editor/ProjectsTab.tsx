@@ -77,11 +77,11 @@ function ProjectForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () =
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs text-slate-500 mb-1">Data rozpoczęcia</label>
-          <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" />
+          <input type="month" value={startDate} onChange={e => setStartDate(e.target.value)} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" />
         </div>
         <div>
           <label className="block text-xs text-slate-500 mb-1">Data zakończenia</label>
-          <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" />
+          <input type="month" value={endDate} onChange={e => setEndDate(e.target.value)} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" />
         </div>
       </div>
 
