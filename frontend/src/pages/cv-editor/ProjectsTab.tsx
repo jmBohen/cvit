@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getDataItems, getCvItems, addItemToCv, removeItemFromCv, createDataItem, updateDataItem, deleteDataItem } from '../../api/dataItems';
 import type { Project } from '../../types/api';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function ProjectForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () => void, initialData?: Project | null, onCancelEdit?: () => void }) {
   const [name, setName] = useState('');
@@ -76,12 +78,26 @@ function ProjectForm({ onSuccess, initialData, onCancelEdit }: { onSuccess: () =
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs text-slate-500 mb-1">Data rozpoczęcia</label>
-          <input type="month" value={startDate} onChange={e => setStartDate(e.target.value)} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" />
+          <label className="block text-xs text-slate-500 mb-1">Data rozpoczęcia (MM/YYYY)</label>
+          <DatePicker
+            selected={startDate ? new Date(startDate) : null}
+            onChange={(date: Date | null) => setStartDate(date ? date.toISOString().substring(0, 7) : '')}
+            dateFormat="MM/yyyy"
+            showMonthYearPicker
+            placeholderText="Wybierz z kalendarza"
+            className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+          />
         </div>
         <div>
-          <label className="block text-xs text-slate-500 mb-1">Data zakończenia</label>
-          <input type="month" value={endDate} onChange={e => setEndDate(e.target.value)} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm" />
+          <label className="block text-xs text-slate-500 mb-1">Data zakończenia (MM/YYYY)</label>
+          <DatePicker
+            selected={endDate ? new Date(endDate) : null}
+            onChange={(date: Date | null) => setEndDate(date ? date.toISOString().substring(0, 7) : '')}
+            dateFormat="MM/yyyy"
+            showMonthYearPicker
+            placeholderText="Wybierz z kalendarza"
+            className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
+          />
         </div>
       </div>
 
