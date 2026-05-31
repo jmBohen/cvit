@@ -83,6 +83,13 @@ Podczas prac nad projektem rozwiązano szereg problemów inżynierskich:
 3. **Circular Dependency:** Rozwiązano błąd krążących zależności między encjami `User` i `Profile` poprzez zastosowanie typu referencyjnego string w TypeORM.
 4. **Walidacja Dat:** Wdrożono transformatory DTO, które mapują formaty `YYYY-MM` (używane przez wygodne kalendarze na frontendzie) na pełne daty akceptowane przez PostgreSQL.
 
-## 5. Podsumowanie
+## 5. Podsumowanie i Perspektywy Rozwoju
 
-Aplikacja CViT jest kompletnym narzędziem spełniającym założenia projektowe. Zapewnia wysoką wydajność (dzięki optymalizacji zapytań i CSS), spójność danych oraz intuicyjny interfejs użytkownika. Projekt jest gotowy do dalszego rozwoju o nowe szablony graficzne.
+Aplikacja CViT jest kompletnym narzędziem spełniającym założenia projektowe, zapewniającym wysoką wydajność, spójność danych oraz intuicyjny interfejs użytkownika. Zastosowana architektura została zaprojektowana z myślą o dużej skalowalności, szczególnie w kontekście wdrażania rozwiązań opartych na sztucznej inteligencji (AI) oraz integracji z profesjonalnymi systemami rekrutacyjnymi (ATS).
+
+### Możliwe kierunki dalszego rozwoju:
+- **Inteligentny Import:** Wykorzystanie modeli NLP do analizy starych plików CV (PDF/Word) i automatycznego wyodrębniania z nich danych w celu tworzenia gotowych "kafelków" doświadczenia i edukacji w bazie użytkownika.
+- **AI CV Optimizer:** Funkcja pozwalająca na wklejenie linku do konkretnej oferty pracy. System, korzystając z bazy danych użytkownika oraz modeli AI, mógłby automatycznie wygenerować optymalną wersję CV, dopasowując słowa kluczowe i priorytetyzując sekcje pod kątem wymagań danej oferty.
+- **Integracje HR i Modelowanie Grafowe:** Możliwość połączenia z dużymi systemami kadrowymi. Wykorzystanie grafowych modeli danych (np. baz typu Neo4j) mogłoby pozwolić na zaawansowane wyszukiwanie pracowników i ofert pracy poprzez analizę powiązań między unikalnymi zestawami kompetencji użytkowników a realnym rynkiem pracy.
+
+Projekt stanowi solidny fundament pod nowoczesne narzędzie typu "Personal Career Manager".
