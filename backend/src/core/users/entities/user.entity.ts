@@ -6,7 +6,7 @@ import {
   OneToOne,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Profile } from '../../profile/entities/profile.entity';
+import type { Profile } from '../../profile/entities/profile.entity';
 
 @Entity()
 export class User {
@@ -29,7 +29,7 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToOne(() => Profile, profile => profile.user)
+  @OneToOne('Profile', (profile: Profile) => profile.user)
   profile: Profile;
 
   @CreateDateColumn()

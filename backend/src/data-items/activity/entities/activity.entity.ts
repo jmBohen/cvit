@@ -11,29 +11,29 @@ import { User } from '../../../core/users/entities/user.entity';
 @Entity()
 export class Activity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  user: User;
+  user!: User;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description!: string;
 
   @Column({ type: 'date', nullable: true })
-  startDate: Date;
+  startDate!: Date;
 
   @Column({ type: 'date', nullable: true })
-  endDate: Date;
+  endDate!: Date;
 
   @Column({ default: false })
-  isCurrent: boolean;
+  isCurrent!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

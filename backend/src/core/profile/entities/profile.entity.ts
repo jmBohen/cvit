@@ -5,14 +5,14 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import type { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Profile {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @OneToOne('User', { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 

@@ -9,7 +9,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const [newCvName, setNewCvName] = useState('');
   const [targetCompany, setTargetCompany] = useState('');
-  const [isGrouped, setIsGrouped] = useState(false);
+  const [groupBy, setGroupBy] = useState<'none' | 'company' | 'position'>('none');
 
   const { data: cvs, isLoading, error } = useQuery<Cv[]>({
     queryKey: ['cv-list'],
@@ -46,17 +46,23 @@ export default function DashboardPage() {
 
   const groupedCvs = useMemo(() => {
     if (!cvs) return {};
-    if (!isGrouped) return { 'Wszystkie CV': cvs };
+    if (groupBy === 'none') return { 'Wszystkie CV': cvs };
 
     return cvs.reduce((acc, cv) => {
-      const company = cv.targetCompany?.trim() || 'Inne (Brak firmy)';
-      if (!acc[company]) {
-        acc[company] = [];
+      let groupKey = 'Inne';
+      if (groupBy === 'company') {
+        groupKey = cv.targetCompany?.trim() || 'Inne (Brak firmy)';
+      } else if (groupBy === 'position') {
+        groupKey = cv.name?.trim() || 'Inne (Brak nazwy)';
       }
-      acc[company].push(cv);
+      
+      if (!acc[groupKey]) {
+        acc[groupKey] = [];
+      }
+      acc[groupKey].push(cv);
       return acc;
     }, {} as Record<string, Cv[]>);
-  }, [cvs, isGrouped]);
+  }, [cvs, groupBy]);
 
   if (isLoading) return <div className="flex justify-center items-center py-20 text-slate-500">Ładowanie Twoich CV...</div>;
   if (error) return <div className="bg-red-50 text-red-600 p-4 rounded-md shadow-sm">Wystąpił błąd podczas pobierania CV.</div>;
@@ -69,19 +75,28 @@ export default function DashboardPage() {
           <p className="text-slate-500 mt-1">Zarządzaj swoimi wersjami CV</p>
         </div>
         {cvs && cvs.length > 0 && (
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-slate-700">Grupuj według firmy:</span>
-            <button
-              onClick={() => setIsGrouped(!isGrouped)}
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isGrouped ? 'bg-blue-600' : 'bg-slate-200'}`}
-              role="switch"
-              aria-checked={isGrouped}
-            >
-              <span
-                aria-hidden="true"
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isGrouped ? 'translate-x-5' : 'translate-x-0'}`}
-              />
-            </button>
+          <div className="flex items-center space-x-3">
+            <span className="text-sm font-medium text-slate-700">Grupuj:</span>
+            <div className="flex bg-slate-100 p-1 rounded-lg">
+              <button
+                onClick={() => setGroupBy('none')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${groupBy === 'none' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Brak
+              </button>
+              <button
+                onClick={() => setGroupBy('company')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${groupBy === 'company' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Wg firmy
+              </button>
+              <button
+                onClick={() => setGroupBy('position')}
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${groupBy === 'position' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Wg stanowiska
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -94,7 +109,7 @@ export default function DashboardPage() {
             <input
               id="cvName"
               type="text"
-              placeholder="Nazwa CV (np. Backend Dev)"
+              placeholder="Nazwa CV / Stanowisko (np. Backend Dev)"
               value={newCvName}
               onChange={(e) => setNewCvName(e.target.value)}
               className="block w-full px-4 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
@@ -135,7 +150,7 @@ export default function DashboardPage() {
           <div className="space-y-8">
             {Object.entries(groupedCvs).map(([groupName, groupCvs]) => (
               <div key={groupName}>
-                {isGrouped && (
+                {groupBy !== 'none' && (
                   <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-200 pb-2">
                     {groupName} <span className="text-sm font-normal text-slate-500 ml-2">({groupCvs.length})</span>
                   </h3>
@@ -157,13 +172,21 @@ export default function DashboardPage() {
                           Utworzono: {new Date(cv.createdAt).toLocaleDateString()}
                         </p>
                       </div>
-                      <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 flex justify-between">
-                        <button 
-                          onClick={() => navigate(`/cv/${cv.id}`)}
-                          className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-                        >
-                          Edytuj CV
-                        </button>
+                      <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 flex justify-between items-center">
+                        <div className="flex space-x-4">
+                          <button 
+                            onClick={() => navigate(`/cv/${cv.id}`)}
+                            className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                          >
+                            Edytuj
+                          </button>
+                          <button 
+                            onClick={() => navigate(`/cv/${cv.id}/preview`)}
+                            className="text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
+                          >
+                            Podgląd
+                          </button>
+                        </div>
                         <button 
                           onClick={() => handleDelete(cv.id)} 
                           className="text-sm font-medium text-red-600 hover:text-red-800 transition-colors"

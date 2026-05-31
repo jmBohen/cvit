@@ -6,8 +6,12 @@ import { ClassSerializerInterceptor } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Enable CORS so the frontend on port 5173 can communicate with the backend
-  app.enableCors();
+  // Enable CORS with explicit configuration to prevent browser blocking
+  app.enableCors({
+    origin: true, // Pozwala na zapytania z dowolnego źródła (frontendu)
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true, // Wymagane jeśli używasz ciasteczek lub nagłówków autoryzacyjnych
+  });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));

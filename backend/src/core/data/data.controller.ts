@@ -1,34 +1,42 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { DataService } from './data.service';
-import { CreateDatumDto } from './dto/create-datum.dto';
-import { UpdateDatumDto } from './dto/update-datum.dto';
+import { Controller, Get } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @Controller('data')
 export class DataController {
-  constructor(private readonly dataService: DataService) {}
+  constructor(private readonly entityManager: EntityManager) {}
 
-  @Post()
-  create(@Body() createDatumDto: CreateDatumDto) {
-    return this.dataService.create(createDatumDto);
-  }
+  @Get('aggregated')
+  async getAggregatedData(@CurrentUser('id') userId: number) {
+    const resources = [
+      { key: 'bio', entity: 'Bio' },
+      { key: 'experience', entity: 'Experience' },
+      { key: 'education', entity: 'Education' },
+      { key: 'project', entity: 'Project' },
+      { key: 'technology', entity: 'Technology' },
+      { key: 'certificate', entity: 'Certificate' },
+      { key: 'language', entity: 'Language' },
+      { key: 'link', entity: 'Link' },
+      { key: 'interest', entity: 'Interest' },
+      { key: 'activity', entity: 'Activity' },
+    ];
 
-  @Get()
-  findAll() {
-    return this.dataService.findAll();
-  }
+    const result: Record<string, any[]> = {};
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.dataService.findOne(+id);
-  }
+    await Promise.all(
+      resources.map(async ({ key, entity }) => {
+        try {
+          const items = await this.entityManager.find(entity, {
+            where: { user: { id: userId } },
+            order: { id: 'DESC' }
+          });
+          result[key] = items;
+        } catch (e) {
+          result[key] = []; // fallback if entity not found or error
+        }
+      })
+    );
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDatumDto: UpdateDatumDto) {
-    return this.dataService.update(+id, updateDatumDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.dataService.remove(+id);
+    return result;
   }
 }

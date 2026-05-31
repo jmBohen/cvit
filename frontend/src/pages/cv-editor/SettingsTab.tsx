@@ -22,23 +22,26 @@ export default function SettingsTab({ cvId }: { cvId: number }) {
     queryFn: () => getCvFull(cvId),
   });
 
-  const currentSettings = cv?.settings?.[0] || {};
-  const currentOrder = currentSettings.sectionOrder || ALL_SECTIONS.map(s => s.id);
+  const currentSettings = cv?.settings?.[0];
+  const defaultOrder = ALL_SECTIONS.map(s => s.id);
+  const currentOrder = currentSettings?.sectionOrder || defaultOrder;
   
   const [sectionOrder, setSectionOrder] = useState<string[]>(currentOrder);
-  const [showPhoto, setShowPhoto] = useState<boolean>(currentSettings.showPhoto ?? true);
-  const [showEmail, setShowEmail] = useState<boolean>(currentSettings.showEmail ?? true);
-  const [showPhone, setShowPhone] = useState<boolean>(currentSettings.showPhone ?? true);
+  const [showPhoto, setShowPhoto] = useState<boolean>(currentSettings?.showPhoto ?? true);
+  const [showEmail, setShowEmail] = useState<boolean>(currentSettings?.showEmail ?? true);
+  const [showPhone, setShowPhone] = useState<boolean>(currentSettings?.showPhone ?? true);
 
   useEffect(() => {
-    if (currentSettings.sectionOrder) {
-      setSectionOrder(currentSettings.sectionOrder);
-    } else {
-      setSectionOrder(ALL_SECTIONS.map(s => s.id));
+    if (currentSettings) {
+      if (currentSettings.sectionOrder) {
+        setSectionOrder(currentSettings.sectionOrder);
+      } else {
+        setSectionOrder(ALL_SECTIONS.map(s => s.id));
+      }
+      setShowPhoto(currentSettings.showPhoto ?? true);
+      setShowEmail(currentSettings.showEmail ?? true);
+      setShowPhone(currentSettings.showPhone ?? true);
     }
-    setShowPhoto(currentSettings.showPhoto ?? true);
-    setShowEmail(currentSettings.showEmail ?? true);
-    setShowPhone(currentSettings.showPhone ?? true);
   }, [currentSettings]);
 
   const mutation = useMutation({

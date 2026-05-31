@@ -218,13 +218,13 @@ export default function CvPreviewPage() {
     <div className="bg-gray-100 min-h-screen py-8 print:bg-white print:p-0 print:m-0">
       <div className="max-w-4xl mx-auto mb-6 px-4 print:hidden flex justify-between items-center">
         <button 
-          onClick={() => navigate(`/cv/${cvId}`)}
+          onClick={() => navigate(-1)}
           className="inline-flex items-center px-4 py-2 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50"
         >
           <svg className="mr-2 h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Wróć do edytora
+          Wróć
         </button>
         <button 
           onClick={handlePrint}

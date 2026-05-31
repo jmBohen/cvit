@@ -162,11 +162,6 @@ export default function ProjectsTab({ cvId }: { cvId: number }) {
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex-1 bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
         <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Moje portfolio</h3>
-        <ProjectForm 
-          initialData={editingItem}
-          onCancelEdit={() => setEditingId(null)}
-          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['projects'] }); queryClient.invalidateQueries({ queryKey: ['cv-projects', cvId] }); }} 
-        />
         
         <div className="space-y-3">
           {allProjects?.length === 0 && <p className="text-sm text-slate-500 italic">Brak dodanych projektów.</p>}
@@ -205,6 +200,14 @@ export default function ProjectsTab({ cvId }: { cvId: number }) {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-slate-200">
+          <ProjectForm 
+          initialData={editingItem}
+          onCancelEdit={() => setEditingId(null)}
+          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['projects'] }); queryClient.invalidateQueries({ queryKey: ['cv-projects', cvId] }); }} 
+        />
         </div>
       </div>
       

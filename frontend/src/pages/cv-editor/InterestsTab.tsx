@@ -90,11 +90,6 @@ export default function InterestsTab({ cvId }: { cvId: number }) {
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex-1 bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
         <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Zainteresowania / Hobby</h3>
-        <InterestForm 
-          initialData={editingItem}
-          onCancelEdit={() => setEditingId(null)}
-          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['interests'] }); queryClient.invalidateQueries({ queryKey: ['cv-interests', cvId] }); }} 
-        />
         
         <div className="space-y-3">
           {allInterests?.length === 0 && <p className="text-sm text-slate-500 italic">Brak dodanych zainteresowań.</p>}
@@ -133,6 +128,14 @@ export default function InterestsTab({ cvId }: { cvId: number }) {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-slate-200">
+          <InterestForm 
+          initialData={editingItem}
+          onCancelEdit={() => setEditingId(null)}
+          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['interests'] }); queryClient.invalidateQueries({ queryKey: ['cv-interests', cvId] }); }} 
+        />
         </div>
       </div>
       

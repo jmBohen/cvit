@@ -12,6 +12,7 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordUserDto } from './dto/change-password-user.dto';
 import { Public } from '../../common/decorators/public.decorator';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -21,6 +22,16 @@ export class UsersController {
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
+  }
+
+  @Get('me')
+  findMe(@CurrentUser('id') userId: number) {
+    return this.usersService.findOne(userId);
+  }
+
+  @Patch('me')
+  updateMe(@CurrentUser('id') userId: number, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(userId, updateUserDto);
   }
 
   @Patch(':id')

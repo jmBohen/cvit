@@ -115,11 +115,6 @@ export default function CertificatesTab({ cvId }: { cvId: number }) {
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex-1 bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
         <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Zdobyte certyfikaty</h3>
-        <CertificateForm 
-          initialData={editingItem}
-          onCancelEdit={() => setEditingId(null)}
-          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['certificates'] }); queryClient.invalidateQueries({ queryKey: ['cv-certificates', cvId] }); }} 
-        />
         
         <div className="space-y-3">
           {allCertificates?.length === 0 && <p className="text-sm text-slate-500 italic">Brak dodanych certyfikatów.</p>}
@@ -159,6 +154,14 @@ export default function CertificatesTab({ cvId }: { cvId: number }) {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-slate-200">
+          <CertificateForm 
+          initialData={editingItem}
+          onCancelEdit={() => setEditingId(null)}
+          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['certificates'] }); queryClient.invalidateQueries({ queryKey: ['cv-certificates', cvId] }); }} 
+        />
         </div>
       </div>
       

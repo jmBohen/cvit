@@ -106,11 +106,6 @@ export default function TechnologiesTab({ cvId }: { cvId: number }) {
     <div className="flex flex-col lg:flex-row gap-6">
       <div className="flex-1 bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
         <h3 className="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Moje dane (Wybierz do CV)</h3>
-        <TechnologyForm 
-          initialData={editingItem} 
-          onCancelEdit={() => setEditingId(null)} 
-          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['technologies'] }); queryClient.invalidateQueries({ queryKey: ['cv-technologies', cvId] }); }} 
-        />
         <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
           {allTechnologies?.length === 0 && <p className="text-sm text-slate-500 italic">Brak dodanych technologii.</p>}
           {allTechnologies?.map((tech) => {
@@ -144,6 +139,14 @@ export default function TechnologiesTab({ cvId }: { cvId: number }) {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-slate-200">
+          <TechnologyForm 
+          initialData={editingItem} 
+          onCancelEdit={() => setEditingId(null)} 
+          onSuccess={() => { setEditingId(null); queryClient.invalidateQueries({ queryKey: ['technologies'] }); queryClient.invalidateQueries({ queryKey: ['cv-technologies', cvId] }); }} 
+        />
         </div>
       </div>
       
